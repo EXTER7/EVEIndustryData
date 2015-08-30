@@ -1,0 +1,35 @@
+apply plugin: 'java'
+
+sourceCompatibility = "1.6"
+targetCompatibility = "1.6"
+
+repositories
+{
+  mavenCentral()
+}
+
+dependencies
+{
+  compile project(':TSL')
+  compile project(':EVEIndustry')
+  testCompile 'junit:junit:4.12'
+}
+
+sourceSets
+{
+  main
+  {
+    java
+    {
+      srcDirs 'src/main/java'
+    }
+  }
+
+  test
+  {
+    java
+    {
+      srcDir 'src/test/java'
+    }
+  }
+}
