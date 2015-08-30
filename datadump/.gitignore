@@ -62,6 +62,7 @@ target/
 
 # SDE file and EID files.
 sde/*
+!sde/README.md
 eid/
 eid.zip
 
