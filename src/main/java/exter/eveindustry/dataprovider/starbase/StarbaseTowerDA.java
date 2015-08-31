@@ -1,5 +1,6 @@
 package exter.eveindustry.dataprovider.starbase;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -12,15 +13,14 @@ import exter.tsl.TSLReader;
 
 public class StarbaseTowerDA
 {
+  public final Map<Integer, StarbaseTower> towers = new HashMap<Integer, StarbaseTower>();
 
-  static public final Map<Integer, StarbaseTower> towers = new HashMap<Integer, StarbaseTower>();
-
-  static
+  public StarbaseTowerDA(File eid_zip)
   {
     ZipFile zip;
     try
     {
-      zip = new ZipFile("test_eid.zip");
+      zip = new ZipFile(eid_zip);
       try
       {
         InputStream raw = zip.getInputStream(zip.getEntry("starbases.tsl"));

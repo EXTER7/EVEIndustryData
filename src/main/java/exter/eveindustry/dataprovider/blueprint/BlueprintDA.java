@@ -1,5 +1,6 @@
 package exter.eveindustry.dataprovider.blueprint;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipFile;
@@ -11,9 +12,7 @@ import exter.tsl.TSLReader;
 
 public class BlueprintDA
 {
-  static public final Cache<Integer, Blueprint> blueprints = new Cache<Integer, Blueprint>(new BlueprintMissListener());
-
-  static private class BlueprintMissListener implements Cache.IMissListener<Integer, Blueprint>
+  private class BlueprintMissListener implements Cache.IMissListener<Integer, Blueprint>
   {
     @Override
     public Blueprint onCacheMiss(Integer key)
@@ -21,7 +20,7 @@ public class BlueprintDA
       Blueprint bp = null;
       try
       {
-        ZipFile zip = new ZipFile("test_eid.zip");
+        ZipFile zip = new ZipFile(zip_path);
         try
         {
           InputStream raw = zip.getInputStream(zip.getEntry("blueprint/" + String.valueOf(key) + ".tsl"));
@@ -51,5 +50,14 @@ public class BlueprintDA
       }
       return bp;
     }
+  }
+
+  public final Cache<Integer, Blueprint> blueprints = new Cache<Integer, Blueprint>(new BlueprintMissListener());
+
+  private File zip_path;
+  
+  public BlueprintDA(File eid_zip)
+  {
+    zip_path = eid_zip;
   }
 }

@@ -1,5 +1,6 @@
 package exter.eveindustry.dataprovider.refine;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipFile;
@@ -11,9 +12,7 @@ import exter.tsl.TSLReader;
 
 public class RefinableDA
 {
-  static public final Cache<Integer, Refinable> refinables = new Cache<Integer, Refinable>(new RefineCacheMiss());
-
-  static private class RefineCacheMiss implements Cache.IMissListener<Integer, Refinable>
+  private class RefineCacheMiss implements Cache.IMissListener<Integer, Refinable>
   {
     @Override
     public Refinable onCacheMiss(Integer refine)
@@ -21,7 +20,7 @@ public class RefinableDA
       ZipFile zip;
       try
       {
-        zip = new ZipFile("test_eid.zip");
+        zip = new ZipFile(eid_path);
         try
         {
           InputStream raw = zip.getInputStream(zip.getEntry("refine/" + String.valueOf(refine) + ".tsl"));
@@ -52,5 +51,14 @@ public class RefinableDA
         return null;
       }
     }
+  }  
+
+  public final Cache<Integer, Refinable> refinables = new Cache<Integer, Refinable>(new RefineCacheMiss());
+  
+  private File eid_path;
+
+  public RefinableDA(File eid_zip)
+  {
+    eid_path = eid_zip;
   }
 }

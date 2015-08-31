@@ -1,5 +1,6 @@
 package exter.eveindustry.dataprovider.planet;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipFile;
@@ -11,10 +12,7 @@ import exter.tsl.TSLReader;
 
 public class PlanetBuildingDA
 {
-
-  static public final Cache<Integer, PlanetBuilding> buildings = new Cache<Integer, PlanetBuilding>(new ProductCacheMiss());
-
-  static private class ProductCacheMiss implements Cache.IMissListener<Integer, PlanetBuilding>
+  private class ProductCacheMiss implements Cache.IMissListener<Integer, PlanetBuilding>
   {
     @Override
     public PlanetBuilding onCacheMiss(Integer pid)
@@ -22,7 +20,7 @@ public class PlanetBuildingDA
       ZipFile zip;
       try
       {
-        zip = new ZipFile("test_eid.zip");
+        zip = new ZipFile(eid_path);
         try
         {
           InputStream raw = zip.getInputStream(zip.getEntry("planet/" + String.valueOf(pid) + ".tsl"));
@@ -53,5 +51,14 @@ public class PlanetBuildingDA
         return null;
       }
     }
+  }
+
+  public final Cache<Integer, PlanetBuilding> buildings = new Cache<Integer, PlanetBuilding>(new ProductCacheMiss());
+  
+  private File eid_path;
+  
+  public PlanetBuildingDA(File eid_zip)
+  {
+    eid_path = eid_zip;
   }
 }

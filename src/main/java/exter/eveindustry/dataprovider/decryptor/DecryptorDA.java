@@ -1,5 +1,6 @@
 package exter.eveindustry.dataprovider.decryptor;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -12,14 +13,14 @@ import exter.tsl.TSLReader;
 
 public class DecryptorDA
 {
-  static public final Map<Integer, Decryptor> decryptors = new HashMap<Integer, Decryptor>();
+  public final Map<Integer, Decryptor> decryptors = new HashMap<Integer, Decryptor>();
 
-  static
+  public DecryptorDA(File eid_zip)
   {
     ZipFile zip;
     try
     {
-      zip = new ZipFile("test_eid.zip");
+      zip = new ZipFile(eid_zip);
       TSLReader tsl = null;
       InputStream raw = null;
       try

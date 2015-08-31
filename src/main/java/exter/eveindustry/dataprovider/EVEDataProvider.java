@@ -1,5 +1,6 @@
 package exter.eveindustry.dataprovider;
 
+import java.io.File;
 import java.math.BigDecimal;
 
 import exter.eveindustry.data.IEVEDataProvider;
@@ -30,6 +31,29 @@ import exter.eveindustry.task.Task.Market;
 
 public class EVEDataProvider implements IEVEDataProvider
 {
+  BlueprintDA da_blueprint;
+  InstallationDA da_installation;
+  DecryptorDA da_decryptor;
+  InventoryDA da_inventory;
+  PlanetBuildingDA da_planetbuilding;
+  PlanetDA da_planet;
+  ReactionDA da_reaction;
+  RefinableDA da_refinable;
+  StarbaseTowerDA da_tower;
+  
+  public EVEDataProvider(File eid_zip)
+  {
+    da_blueprint = new BlueprintDA(eid_zip);
+    da_installation = new InstallationDA(eid_zip);
+    da_decryptor = new DecryptorDA(eid_zip);
+    da_inventory = new InventoryDA(eid_zip);
+    da_planetbuilding = new PlanetBuildingDA(eid_zip);
+    da_planet = new PlanetDA(eid_zip);
+    da_reaction = new ReactionDA(eid_zip);
+    da_refinable = new RefinableDA(eid_zip);
+    da_tower = new StarbaseTowerDA(eid_zip);
+  }
+  
   @Override
   public int getDefaultSolarSystem()
   {
@@ -45,13 +69,13 @@ public class EVEDataProvider implements IEVEDataProvider
   @Override
   public IBlueprint getBlueprint(int blueprint_id)
   {
-    return BlueprintDA.blueprints.get(blueprint_id);
+    return da_blueprint.blueprints.get(blueprint_id);
   }
 
   @Override
   public IInstallationGroup getDefaultInstallation(IBlueprint blueprint)
   {
-    for(InstallationGroup ig:InstallationDA.group_installations.get(blueprint.getProduct().item.getGroupID()))
+    for(InstallationGroup ig:da_installation.group_installations.get(blueprint.getProduct().item.getGroupID()))
     {
       if(ig.InstallationID == 6)
       {
@@ -64,74 +88,74 @@ public class EVEDataProvider implements IEVEDataProvider
   @Override
   public IInstallationGroup getInstallationGroup(int inst_group_id)
   {
-    return InstallationDA.installation_groups.get(inst_group_id);
+    return da_installation.installation_groups.get(inst_group_id);
   }
 
   @Override
   public IInventionInstallation getInventionInstallation(int inv_inst_id)
   {
-    return InstallationDA.invention_installations.get(inv_inst_id);
+    return da_installation.invention_installations.get(inv_inst_id);
   }
 
   @Override
   public IInventionInstallation getDefaultInventionInstallation(IBlueprint blueprint)
   {
     int id = blueprint.getInvention().usesRelics()?38:151;
-    return  InstallationDA.invention_installations.get(id);
+    return  da_installation.invention_installations.get(id);
   }
 
   @Override
   public IDecryptor getDecryptor(int decryptor_id)
   {
-    return DecryptorDA.decryptors.get(decryptor_id);
+    return da_decryptor.decryptors.get(decryptor_id);
   }
 
   @Override
   public IPlanet getPlanet(int planet_id)
   {
-    return PlanetDA.planets.get(planet_id);
+    return da_planet.planets.get(planet_id);
   }
 
   @Override
   public IPlanet getDefaultPlanet()
   {
-    return PlanetDA.planets.get(2015);
+    return da_planet.planets.get(2015);
   }
 
   @Override
   public IPlanetBuilding getPlanetBuilding(int building_id)
   {
-    return PlanetBuildingDA.buildings.get(building_id);
+    return da_planetbuilding.buildings.get(building_id);
   }
 
   @Override
   public IPlanetBuilding getPlanetBuilding(IItem building_product)
   {
-    return PlanetBuildingDA.buildings.get(building_product.getID());
+    return da_planetbuilding.buildings.get(building_product.getID());
   }
 
   @Override
   public IReaction getReaction(int reaction_id)
   {
-    return ReactionDA.reactions.get(reaction_id);
+    return da_reaction.reactions.get(reaction_id);
   }
 
   @Override
   public IRefinable getRefinable(int refinable_id)
   {
-    return RefinableDA.refinables.get(refinable_id);
+    return da_refinable.refinables.get(refinable_id);
   }
 
   @Override
   public IStarbaseTower getStarbaseTower(int tower_id)
   {
-    return StarbaseTowerDA.towers.get(tower_id);
+    return da_tower.towers.get(tower_id);
   }
 
   @Override
   public IStarbaseTower getDefaultStarbaseTower()
   {
-    return StarbaseTowerDA.towers.get(16213);
+    return da_tower.towers.get(16213);
   }
 
   @Override

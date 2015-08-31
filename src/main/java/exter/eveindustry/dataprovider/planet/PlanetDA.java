@@ -1,5 +1,6 @@
 package exter.eveindustry.dataprovider.planet;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -12,15 +13,14 @@ import exter.tsl.TSLReader;
 
 public class PlanetDA
 {
+  public final Map<Integer, Planet> planets = new HashMap<Integer, Planet>();
 
-  static public final Map<Integer, Planet> planets = new HashMap<Integer, Planet>();
-
-  static
+  public PlanetDA(File eid_zip)
   {
     ZipFile zip;
     try
     {
-      zip = new ZipFile("test_eid.zip");
+      zip = new ZipFile(eid_zip);
       try
       {
         InputStream raw = zip.getInputStream(zip.getEntry("planet/planets.tsl"));

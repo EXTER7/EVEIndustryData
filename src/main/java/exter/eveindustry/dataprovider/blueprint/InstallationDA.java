@@ -1,5 +1,6 @@
 package exter.eveindustry.dataprovider.blueprint;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -14,16 +15,16 @@ import exter.tsl.TSLReader;
 
 public class InstallationDA
 {
-  static public final Map<Integer, InventionInstallation> invention_installations = new HashMap<Integer, InventionInstallation>();
-  static public final Map<Integer, InstallationGroup> installation_groups = new HashMap<Integer, InstallationGroup>();
-  static public final Map<Integer, List<InstallationGroup>> group_installations = new HashMap<Integer, List<InstallationGroup>>();
-
-  static
+  public final Map<Integer, InventionInstallation> invention_installations = new HashMap<Integer, InventionInstallation>();
+  public final Map<Integer, InstallationGroup> installation_groups = new HashMap<Integer, InstallationGroup>();
+  public final Map<Integer, List<InstallationGroup>> group_installations = new HashMap<Integer, List<InstallationGroup>>();
+  
+  public InstallationDA(File eid_zip)
   {
     ZipFile zip;
     try
     {
-      zip = new ZipFile("test_eid.zip");
+      zip = new ZipFile(eid_zip);
 
       TSLReader reader = null;
       InputStream raw = null;

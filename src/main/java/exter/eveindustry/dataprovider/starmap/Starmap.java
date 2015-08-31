@@ -1,5 +1,6 @@
 package exter.eveindustry.dataprovider.starmap;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -12,15 +13,14 @@ import exter.tsl.TSLReader;
 
 public class Starmap
 {
+  public final Map<Integer, SolarSystem> systems = new HashMap<Integer, SolarSystem>();
 
-  static public final Map<Integer, SolarSystem> systems = new HashMap<Integer, SolarSystem>();
-
-  static
+  public Starmap(File eid_zip)
   {
     ZipFile zip;
     try
     {
-      zip = new ZipFile("test_eid.zip");
+      zip = new ZipFile(eid_zip);
       try
       {
         InputStream raw = zip.getInputStream(zip.getEntry("starmap.tsl"));

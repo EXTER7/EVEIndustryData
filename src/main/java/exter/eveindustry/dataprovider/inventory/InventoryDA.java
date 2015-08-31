@@ -1,5 +1,6 @@
 package exter.eveindustry.dataprovider.inventory;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -19,12 +20,11 @@ public class InventoryDA
   static public final Map<Integer, ItemMetaGroup> metagroups = new HashMap<Integer, ItemMetaGroup>();
   static public final Map<Integer, List<Integer>> category_groups = new HashMap<Integer, List<Integer>>();
 
-  static
+  public InventoryDA(File eid_zip)
   {
     try
     {
-      System.out.print("Loading Inventory ...");
-      ZipFile zip = new ZipFile("test_eid.zip");
+      ZipFile zip = new ZipFile(eid_zip);
       TSLReader tsl;
 
       InputStream raw;
@@ -101,6 +101,5 @@ public class InventoryDA
     {
       throw new RuntimeException(e2);
     }
-    System.out.println(" Done.");
   }
 }
