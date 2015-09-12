@@ -117,12 +117,6 @@ public class EVEDataProvider implements IEVEDataProvider
   }
 
   @Override
-  public IPlanet getDefaultPlanet()
-  {
-    return da_planet.planets.get(2015);
-  }
-
-  @Override
   public IPlanetBuilding getPlanetBuilding(int building_id)
   {
     return da_planetbuilding.buildings.get(building_id);
@@ -150,12 +144,6 @@ public class EVEDataProvider implements IEVEDataProvider
   public IStarbaseTower getStarbaseTower(int tower_id)
   {
     return da_tower.towers.get(tower_id);
-  }
-
-  @Override
-  public IStarbaseTower getDefaultStarbaseTower()
-  {
-    return da_tower.towers.get(16213);
   }
 
   @Override
