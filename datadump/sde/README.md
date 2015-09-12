@@ -14,7 +14,7 @@ The directory structure at the end should look like this:
     'datadump/'
     +- 'sde/'
     |  +- 'Blueprints.yaml'
-    |  +- 'eve.db.bz2' (or 'eve.db.bz2')
+    |  +- 'eve.db.bz2' (or 'eve.db')
     |  +- 'Types' (optional)
     |  |   +- '0_64.png'
     |  |   +- '1_64.png'
