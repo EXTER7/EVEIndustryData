@@ -4,7 +4,10 @@ from .item import *
 class InventionResult:
   def __init__(self,data):
     self.rid = int(data["typeID"])
-    self.chance = float(data["probability"])
+    if "probability" in data:
+      self.chance = float(data["probability"])
+    else:
+      self.chance = float(-1)
     self.runs = int(data["quantity"])
 
 class InventionRelic:
@@ -85,6 +88,9 @@ class Blueprint:
         inv = BlueprintInvention(dbc,inventory,bp.invdata)
         if inv.eskill != -1:
           for r in inv.results:
+            if not r.rid in table or r.chance < 0:
+              print("Bad blueprint invention result: ",r.rid," - ",inventory.get_item(r.rid).name)
+              continue
             d = table[r.rid]
             p = int(d["activities"]["manufacturing"]["products"][0]["typeID"])
             if p in result:

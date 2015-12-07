@@ -155,65 +155,72 @@ for i in blueprints:
   if not prod.group in group_list:
     group_list.append(prod.group)
 
-  if len(bp.materials) > 0 and not prod.name.startswith("Compressed "): # Skip ore compression and empty BPs.
+  if len(bp.materials) == 0: # Skip empty BPs.
+    continue
+  if prod.name.startswith("Compressed "): # Skip ore compression.
+    continue
+  if inventory.get_item(bp.bpid).group == 1517: # Skip unreleased citadel related blueprints.
+    continue
 
-    add_to_inventory_tsl(bp.prodid)
-    bp_list.add_entry(bp.prodid,0)
-    bpid_list.append(bp.prodid)
+  add_to_inventory_tsl(bp.prodid)
+  bp_list.add_entry(bp.prodid,0)
+  bpid_list.append(bp.prodid)
 
 
-    tslfile = TSLWriter("eid/blueprint/%i.tsl" % (bp.prodid))
-    tslfile.start_collection("blueprint")
-    tslfile.put_value("id",bp.prodid)
-    tslfile.put_value("amount",bp.amount)
-    tslfile.put_value("time",bp.time)
-    for mat in bp.materials:
-      add_to_inventory_tsl(mat.itemid)
-      if mat.amount > 0:
+  tslfile = TSLWriter("eid/blueprint/%i.tsl" % (bp.prodid))
+  tslfile.start_collection("blueprint")
+  tslfile.put_value("id",bp.prodid)
+  tslfile.put_value("amount",bp.amount)
+  tslfile.put_value("time",bp.time)
+  for mat in bp.materials:
+    add_to_inventory_tsl(mat.itemid)
+    if mat.amount > 0:
+      tslfile.start_collection("material")
+      tslfile.push_formatter()
+      tslfile.formatter.set_newline(False)
+      tslfile.put_value("id",mat.itemid)
+      tslfile.put_value("amount",mat.amount)
+      tslfile.end_collection()
+      tslfile.pop_formatter()
+  for s in bp.skills:
+    add_to_inventory_tsl(s) 
+    tslfile.put_value("skill",s)
+
+  if bp.invention != None:
+    tslfile.start_collection("invention")
+    tslfile.put_value("time",int(bp.invention.time))
+    if len(bp.invention_relics) == 0:
+      tslfile.put_value("chance",bp.invention_chance)
+      tslfile.put_value("runs",bp.invention_runs)
+    add_to_inventory_tsl(bp.invention.eskill)
+    tslfile.put_value("eskill",bp.invention.eskill)
+    for s in bp.invention.dskills:
+      add_to_inventory_tsl(s)
+      tslfile.put_value("dskill",s)
+    for m in bp.invention.materials:
+      add_to_inventory_tsl(m.itemid)
+      if m.amount > 0:
         tslfile.start_collection("material")
         tslfile.push_formatter()
         tslfile.formatter.set_newline(False)
-        tslfile.put_value("id",mat.itemid)
-        tslfile.put_value("amount",mat.amount)
+        tslfile.put_value("id",m.itemid)
+        tslfile.put_value("amount",m.amount)
         tslfile.end_collection()
         tslfile.pop_formatter()
-    for s in bp.skills:
-      add_to_inventory_tsl(s) 
-      tslfile.put_value("skill",s)
-
-    if bp.invention != None:
-      tslfile.start_collection("invention")
-      tslfile.put_value("time",int(bp.invention.time))
-      if len(bp.invention_relics) == 0:
-        tslfile.put_value("chance",bp.invention_chance)
-        tslfile.put_value("runs",bp.invention_runs)
-      add_to_inventory_tsl(bp.invention.eskill)
-      tslfile.put_value("eskill",bp.invention.eskill)
-      for s in bp.invention.dskills:
-        add_to_inventory_tsl(s)
-        tslfile.put_value("dskill",s)
-      for m in bp.invention.materials:
-        add_to_inventory_tsl(m.itemid)
-        if m.amount > 0:
-          tslfile.start_collection("material")
-          tslfile.push_formatter()
-          tslfile.formatter.set_newline(False)
-          tslfile.put_value("id",m.itemid)
-          tslfile.put_value("amount",m.amount)
-          tslfile.end_collection()
-          tslfile.pop_formatter()
-      for m in bp.invention_relics:
-        add_to_inventory_tsl(m.rid)
-        tslfile.start_collection("relic")
-        tslfile.push_formatter()
-        tslfile.formatter.set_newline(False)
-        tslfile.put_value("id",m.rid)
-        tslfile.put_value("chance",m.chance)
-        tslfile.put_value("runs",m.runs)
-        tslfile.end_collection()
-        tslfile.pop_formatter()
+    for m in bp.invention_relics:
+      add_to_inventory_tsl(m.rid)
+      tslfile.start_collection("relic")
+      tslfile.push_formatter()
+      tslfile.formatter.set_newline(False)
+      tslfile.put_value("id",m.rid)
+      tslfile.put_value("chance",m.chance)
+      tslfile.put_value("runs",m.runs)
       tslfile.end_collection()
+      tslfile.pop_formatter()
     tslfile.end_collection()
+  tslfile.end_collection()
+
+
 
 bp_list.sort_entries(lambda entry: inventory.get_item(entry.item).name)
 bp_list.write_to_file("eid/blueprint/index.tsl")
@@ -285,7 +292,7 @@ for gi in gi_list:
   tslfile.start_collection("group")
   tslfile.push_formatter()
   tslfile.formatter.set_newline(False)
-  tslfile.put_value("id",gi.installation * 1337 + gi.group)
+  tslfile.put_value("id",gi.installation * 23537 + gi.group)
   tslfile.put_value("group",gi.group)
   tslfile.put_value("installation",gi.installation)
   tslfile.put_value("time",gi.time)
