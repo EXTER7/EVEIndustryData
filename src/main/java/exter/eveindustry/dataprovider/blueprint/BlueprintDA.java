@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipFile;
 
+import exter.eveindustry.dataprovider.inventory.InventoryDA;
 import exter.eveindustry.test.data.cache.Cache;
 import exter.tsl.InvalidTSLException;
 import exter.tsl.TSLObject;
@@ -20,7 +21,7 @@ public class BlueprintDA
       Blueprint bp = null;
       try
       {
-        ZipFile zip = new ZipFile(zip_path);
+        ZipFile zip = new ZipFile(eid_zip);
         try
         {
           InputStream raw = zip.getInputStream(zip.getEntry("blueprint/" + String.valueOf(key) + ".tsl"));
@@ -30,7 +31,7 @@ public class BlueprintDA
             reader.moveNext();
             if(reader.getState() == TSLReader.State.OBJECT && reader.getName().equals("blueprint"))
             {
-              bp = new Blueprint(new TSLObject(reader));
+              bp = new Blueprint(new TSLObject(reader),inventory);
             }
           } catch(InvalidTSLException e)
           {
@@ -54,10 +55,12 @@ public class BlueprintDA
 
   public final Cache<Integer, Blueprint> blueprints = new Cache<Integer, Blueprint>(new BlueprintMissListener());
 
-  private File zip_path;
+  private File eid_zip;
+  private InventoryDA inventory;
   
-  public BlueprintDA(File eid_zip)
+  public BlueprintDA(File eid_zip,InventoryDA inventory)
   {
-    zip_path = eid_zip;
+    this.eid_zip = eid_zip;
+    this.inventory = inventory;
   }
 }

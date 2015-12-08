@@ -14,11 +14,11 @@ import exter.tsl.TSLReader;
 
 public class InventoryDA
 {
-  static public final Map<Integer, Item> items = new HashMap<Integer, Item>();
-  static public final Map<Integer, ItemGroup> groups = new HashMap<Integer, ItemGroup>();
-  static public final Map<Integer, ItemCategory> categories = new HashMap<Integer, ItemCategory>();
-  static public final Map<Integer, ItemMetaGroup> metagroups = new HashMap<Integer, ItemMetaGroup>();
-  static public final Map<Integer, List<Integer>> category_groups = new HashMap<Integer, List<Integer>>();
+  public final Map<Integer, Item> items = new HashMap<Integer, Item>();
+  public final Map<Integer, ItemGroup> groups = new HashMap<Integer, ItemGroup>();
+  public final Map<Integer, ItemCategory> categories = new HashMap<Integer, ItemCategory>();
+  public final Map<Integer, ItemMetaGroup> metagroups = new HashMap<Integer, ItemMetaGroup>();
+  public final Map<Integer, List<Integer>> category_groups = new HashMap<Integer, List<Integer>>();
 
   public InventoryDA(File eid_zip)
   {

@@ -14,9 +14,9 @@ public class Decryptor implements IDecryptor
   public final int Runs;
   public final double Chance;
 
-  public Decryptor(TSLObject tsl)
+  public Decryptor(TSLObject tsl,InventoryDA inventory)
   {
-    Item = InventoryDA.items.get(tsl.getStringAsInt("id",-1));
+    Item = inventory.items.get(tsl.getStringAsInt("id",-1));
     ME = tsl.getStringAsInt("me",0);
     TE = tsl.getStringAsInt("te",0);
     Runs = tsl.getStringAsInt("runs",0);

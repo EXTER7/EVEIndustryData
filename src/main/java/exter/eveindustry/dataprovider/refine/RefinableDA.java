@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipFile;
 
+import exter.eveindustry.dataprovider.inventory.InventoryDA;
 import exter.eveindustry.test.data.cache.Cache;
 import exter.tsl.InvalidTSLException;
 import exter.tsl.TSLObject;
@@ -20,7 +21,7 @@ public class RefinableDA
       ZipFile zip;
       try
       {
-        zip = new ZipFile(eid_path);
+        zip = new ZipFile(eid_zip);
         try
         {
           InputStream raw = zip.getInputStream(zip.getEntry("refine/" + String.valueOf(refine) + ".tsl"));
@@ -30,7 +31,7 @@ public class RefinableDA
           {
             raw.close();
             zip.close();
-            return new Refinable(new TSLObject(reader));
+            return new Refinable(new TSLObject(reader),inventory);
           } else
           {
             raw.close();
@@ -55,10 +56,12 @@ public class RefinableDA
 
   public final Cache<Integer, Refinable> refinables = new Cache<Integer, Refinable>(new RefineCacheMiss());
   
-  private File eid_path;
-
-  public RefinableDA(File eid_zip)
+  private File eid_zip;
+  private InventoryDA inventory;
+  
+  public RefinableDA(File eid_zip,InventoryDA inventory)
   {
-    eid_path = eid_zip;
+    this.eid_zip = eid_zip;
+    this.inventory = inventory;
   }
 }

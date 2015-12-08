@@ -59,6 +59,6 @@ public class PlanetBuildingDA
   
   public PlanetBuildingDA(File eid_zip)
   {
-    eid_path = eid_zip;
+    this.eid_path = eid_zip;
   }
 }

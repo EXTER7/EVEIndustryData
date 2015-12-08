@@ -17,7 +17,7 @@ public class Planet implements IPlanet
   public final int ID;
   public final boolean Advanced;
   
-  public Planet(TSLObject tsl)
+  public Planet(TSLObject tsl,InventoryDA inventory)
   {
     ID = tsl.getStringAsInt("id",-1);
     TypeName = tsl.getString("name",null);
@@ -26,7 +26,7 @@ public class Planet implements IPlanet
     List<IItem> res = new ArrayList<IItem>();
     for(Integer id:tsl.getStringAsIntegerList("resource"))
     {
-      res.add(InventoryDA.items.get(id));
+      res.add(inventory.items.get(id));
     }
     Resources = Collections.unmodifiableList(res);
   }

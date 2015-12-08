@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipFile;
 
+import exter.eveindustry.dataprovider.inventory.InventoryDA;
 import exter.tsl.InvalidTSLException;
 import exter.tsl.TSLObject;
 import exter.tsl.TSLReader;
@@ -15,7 +16,7 @@ public class DecryptorDA
 {
   public final Map<Integer, Decryptor> decryptors = new HashMap<Integer, Decryptor>();
 
-  public DecryptorDA(File eid_zip)
+  public DecryptorDA(File eid_zip,InventoryDA inventory)
   {
     ZipFile zip;
     try
@@ -41,7 +42,7 @@ public class DecryptorDA
 
           if(type == TSLReader.State.OBJECT)
           {
-            Decryptor d = new Decryptor(new TSLObject(tsl));
+            Decryptor d = new Decryptor(new TSLObject(tsl),inventory);
             decryptors.put(d.getID(), d);
           }
         }

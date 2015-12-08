@@ -5,25 +5,26 @@ import java.math.BigDecimal;
 
 import exter.eveindustry.data.IEVEDataProvider;
 import exter.eveindustry.data.blueprint.IBlueprint;
-import exter.eveindustry.data.blueprint.IInstallationGroup;
-import exter.eveindustry.data.blueprint.IInventionInstallation;
-import exter.eveindustry.data.decryptor.IDecryptor;
 import exter.eveindustry.data.inventory.IItem;
-import exter.eveindustry.data.planet.IPlanet;
-import exter.eveindustry.data.planet.IPlanetBuilding;
-import exter.eveindustry.data.reaction.IReaction;
-import exter.eveindustry.data.reaction.IStarbaseTower;
-import exter.eveindustry.data.refinable.IRefinable;
 import exter.eveindustry.data.systemcost.ISolarSystemIndustryCost;
+import exter.eveindustry.dataprovider.blueprint.Blueprint;
 import exter.eveindustry.dataprovider.blueprint.BlueprintDA;
 import exter.eveindustry.dataprovider.blueprint.InstallationDA;
 import exter.eveindustry.dataprovider.blueprint.InstallationGroup;
+import exter.eveindustry.dataprovider.blueprint.InventionInstallation;
+import exter.eveindustry.dataprovider.decryptor.Decryptor;
 import exter.eveindustry.dataprovider.decryptor.DecryptorDA;
 import exter.eveindustry.dataprovider.inventory.InventoryDA;
+import exter.eveindustry.dataprovider.inventory.Item;
+import exter.eveindustry.dataprovider.planet.Planet;
+import exter.eveindustry.dataprovider.planet.PlanetBuilding;
 import exter.eveindustry.dataprovider.planet.PlanetBuildingDA;
 import exter.eveindustry.dataprovider.planet.PlanetDA;
+import exter.eveindustry.dataprovider.reaction.Reaction;
 import exter.eveindustry.dataprovider.reaction.ReactionDA;
+import exter.eveindustry.dataprovider.refine.Refinable;
 import exter.eveindustry.dataprovider.refine.RefinableDA;
+import exter.eveindustry.dataprovider.starbase.StarbaseTower;
 import exter.eveindustry.dataprovider.starbase.StarbaseTowerDA;
 import exter.eveindustry.dataprovider.systemcost.DummySystemCost;
 import exter.eveindustry.task.Task.Market;
@@ -31,27 +32,27 @@ import exter.eveindustry.task.Task.Market;
 
 public class EVEDataProvider implements IEVEDataProvider
 {
-  BlueprintDA da_blueprint;
-  InstallationDA da_installation;
-  DecryptorDA da_decryptor;
-  InventoryDA da_inventory;
-  PlanetBuildingDA da_planetbuilding;
-  PlanetDA da_planet;
-  ReactionDA da_reaction;
-  RefinableDA da_refinable;
-  StarbaseTowerDA da_tower;
+  private InventoryDA da_inventory;
+  private BlueprintDA da_blueprint;
+  private InstallationDA da_installation;
+  private DecryptorDA da_decryptor;
+  private PlanetBuildingDA da_planetbuilding;
+  private PlanetDA da_planet;
+  private ReactionDA da_reaction;
+  private RefinableDA da_refinable;
+  private StarbaseTowerDA da_tower;
   
   public EVEDataProvider(File eid_zip)
   {
-    da_blueprint = new BlueprintDA(eid_zip);
-    da_installation = new InstallationDA(eid_zip);
-    da_decryptor = new DecryptorDA(eid_zip);
     da_inventory = new InventoryDA(eid_zip);
+    da_blueprint = new BlueprintDA(eid_zip,da_inventory);
+    da_installation = new InstallationDA(eid_zip);
+    da_decryptor = new DecryptorDA(eid_zip,da_inventory);
     da_planetbuilding = new PlanetBuildingDA(eid_zip);
-    da_planet = new PlanetDA(eid_zip);
+    da_planet = new PlanetDA(eid_zip,da_inventory);
     da_reaction = new ReactionDA(eid_zip);
-    da_refinable = new RefinableDA(eid_zip);
-    da_tower = new StarbaseTowerDA(eid_zip);
+    da_refinable = new RefinableDA(eid_zip,da_inventory);
+    da_tower = new StarbaseTowerDA(eid_zip,da_inventory);
   }
   
   @Override
@@ -61,19 +62,19 @@ public class EVEDataProvider implements IEVEDataProvider
   }
 
   @Override
-  public IItem getItem(int item_id)
+  public Item getItem(int item_id)
   {
-    return InventoryDA.items.get(item_id);
+    return da_inventory.items.get(item_id);
   }
 
   @Override
-  public IBlueprint getBlueprint(int blueprint_id)
+  public Blueprint getBlueprint(int blueprint_id)
   {
     return da_blueprint.blueprints.get(blueprint_id);
   }
 
   @Override
-  public IInstallationGroup getDefaultInstallation(IBlueprint blueprint)
+  public InstallationGroup getDefaultInstallation(IBlueprint blueprint)
   {
     for(InstallationGroup ig:da_installation.group_installations.get(blueprint.getProduct().item.getGroupID()))
     {
@@ -86,62 +87,62 @@ public class EVEDataProvider implements IEVEDataProvider
   }
 
   @Override
-  public IInstallationGroup getInstallationGroup(int inst_group_id)
+  public InstallationGroup getInstallationGroup(int inst_group_id)
   {
     return da_installation.installation_groups.get(inst_group_id);
   }
 
   @Override
-  public IInventionInstallation getInventionInstallation(int inv_inst_id)
+  public InventionInstallation getInventionInstallation(int inv_inst_id)
   {
     return da_installation.invention_installations.get(inv_inst_id);
   }
 
   @Override
-  public IInventionInstallation getDefaultInventionInstallation(IBlueprint blueprint)
+  public InventionInstallation getDefaultInventionInstallation(IBlueprint blueprint)
   {
     int id = blueprint.getInvention().usesRelics()?38:151;
-    return  da_installation.invention_installations.get(id);
+    return da_installation.invention_installations.get(id);
   }
 
   @Override
-  public IDecryptor getDecryptor(int decryptor_id)
+  public Decryptor getDecryptor(int decryptor_id)
   {
     return da_decryptor.decryptors.get(decryptor_id);
   }
 
   @Override
-  public IPlanet getPlanet(int planet_id)
+  public Planet getPlanet(int planet_id)
   {
     return da_planet.planets.get(planet_id);
   }
 
   @Override
-  public IPlanetBuilding getPlanetBuilding(int building_id)
+  public PlanetBuilding getPlanetBuilding(int building_id)
   {
     return da_planetbuilding.buildings.get(building_id);
   }
 
   @Override
-  public IPlanetBuilding getPlanetBuilding(IItem building_product)
+  public PlanetBuilding getPlanetBuilding(IItem building_product)
   {
     return da_planetbuilding.buildings.get(building_product.getID());
   }
 
   @Override
-  public IReaction getReaction(int reaction_id)
+  public Reaction getReaction(int reaction_id)
   {
     return da_reaction.reactions.get(reaction_id);
   }
 
   @Override
-  public IRefinable getRefinable(int refinable_id)
+  public Refinable getRefinable(int refinable_id)
   {
     return da_refinable.refinables.get(refinable_id);
   }
 
   @Override
-  public IStarbaseTower getStarbaseTower(int tower_id)
+  public StarbaseTower getStarbaseTower(int tower_id)
   {
     return da_tower.towers.get(tower_id);
   }

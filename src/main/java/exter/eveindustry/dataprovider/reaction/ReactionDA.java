@@ -20,7 +20,7 @@ public class ReactionDA
       ZipFile zip;
       try
       {
-        zip = new ZipFile(eid_path);
+        zip = new ZipFile(eid_zip);
         try
         {
           InputStream raw = zip.getInputStream(zip.getEntry("reaction/" + String.valueOf(rid) + ".tsl"));
@@ -56,10 +56,10 @@ public class ReactionDA
 
   public final Cache<Integer, Reaction> reactions = new Cache<Integer, Reaction>(new ReactionCacheMiss());
 
-  private File eid_path;
+  private File eid_zip;
 
   public ReactionDA(File eid_zip)
   {
-    eid_path = eid_zip;
+    this.eid_zip = eid_zip;
   }
 }

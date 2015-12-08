@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipFile;
 
+import exter.eveindustry.dataprovider.inventory.InventoryDA;
 import exter.tsl.InvalidTSLException;
 import exter.tsl.TSLObject;
 import exter.tsl.TSLReader;
@@ -15,7 +16,8 @@ public class PlanetDA
 {
   public final Map<Integer, Planet> planets = new HashMap<Integer, Planet>();
 
-  public PlanetDA(File eid_zip)
+  
+  public PlanetDA(File eid_zip,InventoryDA inventory)
   {
     ZipFile zip;
     try
@@ -39,7 +41,7 @@ public class PlanetDA
 
           if(type == TSLReader.State.OBJECT)
           {
-            Planet p = new Planet(new TSLObject(tsl));
+            Planet p = new Planet(new TSLObject(tsl),inventory);
             planets.put(p.ID, p);
           }
         }

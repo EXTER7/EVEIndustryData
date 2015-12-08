@@ -12,9 +12,9 @@ import java.util.TreeSet;
 
 import exter.eveindustry.data.blueprint.IBlueprint;
 import exter.eveindustry.data.inventory.IItem;
+import exter.eveindustry.dataprovider.inventory.InventoryDA;
+import exter.eveindustry.dataprovider.inventory.Item;
 import exter.eveindustry.item.ItemStack;
-import exter.eveindustry.test.data.inventory.InventoryDA;
-import exter.eveindustry.test.data.inventory.Item;
 import exter.tsl.TSLObject;
 
 public class Blueprint implements IBlueprint
@@ -27,9 +27,9 @@ public class Blueprint implements IBlueprint
       private final int Runs;
       private final double Chance;
 
-      public Relic(TSLObject tsl)
+      public Relic(TSLObject tsl,InventoryDA inventory)
       {
-        RelicItem = InventoryDA.items.get(tsl.getStringAsInt("id",-1));
+        RelicItem = inventory.items.get(tsl.getStringAsInt("id",-1));
         Runs = tsl.getStringAsInt("runs",0);
         Chance = tsl.getStringAsDouble("chance",0);
       }
@@ -79,7 +79,7 @@ public class Blueprint implements IBlueprint
     private final Map<Integer,Relic> Relics;
     private final Set<Integer> RelicList;
     
-    public Invention(TSLObject tsl)
+    public Invention(TSLObject tsl,InventoryDA inventory)
     {
       ArrayList<ItemStack> matlist = new ArrayList<ItemStack>();
       Time = tsl.getStringAsInt("time",-1);
@@ -91,7 +91,7 @@ public class Blueprint implements IBlueprint
       List<TSLObject> tsl_materials = tsl.getObjectList("material");
       for(TSLObject mat_tsl:tsl_materials)
       {
-        Item mat = InventoryDA.items.get(mat_tsl.getStringAsInt("id",-1));
+        Item mat = inventory.items.get(mat_tsl.getStringAsInt("id",-1));
         int amount = mat_tsl.getStringAsInt("amount",0);
         matlist.add(new ItemStack(mat, amount));
       }
@@ -103,7 +103,7 @@ public class Blueprint implements IBlueprint
         RelicList = new TreeSet<Integer>(new RelicComparator());
         for(TSLObject tr: tsl_relics)
         {
-          Relic r = new Relic(tr);
+          Relic r = new Relic(tr,inventory);
           Relics.put(r.RelicItem.getID(), r);
           RelicList.add(r.RelicItem.getID());
         }
@@ -183,18 +183,18 @@ public class Blueprint implements IBlueprint
   public final Set<Integer> Skills;
   
   
-  public Blueprint(TSLObject tsl)
+  public Blueprint(TSLObject tsl,InventoryDA inventory)
   {
     List<ItemStack> matlist = new ArrayList<ItemStack>();
 
-    Product = new ItemStack(InventoryDA.items.get(tsl.getStringAsInt("id",-1)),tsl.getStringAsInt("amount",-1));
+    Product = new ItemStack(inventory.items.get(tsl.getStringAsInt("id",-1)),tsl.getStringAsInt("amount",-1));
     ManufactureTime = tsl.getStringAsInt("time",-1);
 
     List<TSLObject> tsl_materials = tsl.getObjectList("material");
 
     for(TSLObject mat_tsl:tsl_materials)
     {
-      Item mat = InventoryDA.items.get(mat_tsl.getStringAsInt("id",-1));
+      Item mat = inventory.items.get(mat_tsl.getStringAsInt("id",-1));
       int amount = mat_tsl.getStringAsInt("amount",0);
 
       matlist.add(new ItemStack(mat, amount));
@@ -205,7 +205,7 @@ public class Blueprint implements IBlueprint
     TSLObject tsl_inv = tsl.getObject("invention");
     if(tsl_inv != null)
     {
-      Invention = new Invention(tsl_inv);
+      Invention = new Invention(tsl_inv,inventory);
     } else
     {
       Invention = null;

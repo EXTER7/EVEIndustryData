@@ -16,18 +16,18 @@ public class Refinable implements IRefinable
   public final ItemStack RefineItem;
   public final int Skill;
 
-  public Refinable(TSLObject tsl)
+  public Refinable(TSLObject tsl,InventoryDA inventory)
   {
 
     ArrayList<ItemStack> prodlist = new ArrayList<ItemStack>();
 
-    RefineItem = new ItemStack(InventoryDA.items.get(tsl.getStringAsInt("id",-1)),tsl.getStringAsInt("batch",-1));
+    RefineItem = new ItemStack(inventory.items.get(tsl.getStringAsInt("id",-1)),tsl.getStringAsInt("batch",-1));
     Skill = tsl.getStringAsInt("sid",-1);
     
     List<TSLObject> products_tsl = tsl.getObjectList("product");
     for(TSLObject min:products_tsl)
     {
-      Item min_id = InventoryDA.items.get(min.getStringAsInt("id",-1));
+      Item min_id = inventory.items.get(min.getStringAsInt("id",-1));
       int min_amount = min.getStringAsInt("amount",-1);
       prodlist.add(new ItemStack(min_id,min_amount));
     }
