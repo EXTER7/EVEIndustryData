@@ -48,9 +48,9 @@ public class EVEDataProvider implements IEVEDataProvider
     da_blueprint = new BlueprintDA(eid_zip,da_inventory);
     da_installation = new InstallationDA(eid_zip);
     da_decryptor = new DecryptorDA(eid_zip,da_inventory);
-    da_planetbuilding = new PlanetBuildingDA(eid_zip);
+    da_planetbuilding = new PlanetBuildingDA(eid_zip,da_inventory);
     da_planet = new PlanetDA(eid_zip,da_inventory);
-    da_reaction = new ReactionDA(eid_zip);
+    da_reaction = new ReactionDA(eid_zip,da_inventory);
     da_refinable = new RefinableDA(eid_zip,da_inventory);
     da_tower = new StarbaseTowerDA(eid_zip,da_inventory);
   }

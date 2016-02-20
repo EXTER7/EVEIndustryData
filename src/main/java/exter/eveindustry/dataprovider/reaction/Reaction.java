@@ -6,8 +6,8 @@ import java.util.List;
 
 import exter.eveindustry.data.reaction.IReaction;
 import exter.eveindustry.item.ItemStack;
-import exter.eveindustry.test.data.inventory.InventoryDA;
-import exter.eveindustry.test.data.inventory.Item;
+import exter.eveindustry.dataprovider.inventory.InventoryDA;
+import exter.eveindustry.dataprovider.inventory.Item;
 import exter.tsl.TSLObject;
 
 public class Reaction implements IReaction
@@ -16,7 +16,7 @@ public class Reaction implements IReaction
   public final List<ItemStack> Outputs;
   public final int ID;
 
-  public Reaction(TSLObject tsl)
+  public Reaction(TSLObject tsl,InventoryDA inventory)
   {
     ID = tsl.getStringAsInt("id",-1);
     
@@ -24,7 +24,7 @@ public class Reaction implements IReaction
     List<TSLObject> materials_tsl = tsl.getObjectList("in");
     for(TSLObject mat:materials_tsl)
     {
-      Item mat_id = InventoryDA.items.get(mat.getStringAsInt("id",-1));
+      Item mat_id = inventory.items.get(mat.getStringAsInt("id",-1));
       int mat_amount = mat.getStringAsInt("amount",-1);
       matlist.add(new ItemStack(mat_id,mat_amount));
     }
@@ -34,7 +34,7 @@ public class Reaction implements IReaction
     materials_tsl = tsl.getObjectList("out");
     for(TSLObject mat:materials_tsl)
     {
-      Item mat_id = InventoryDA.items.get(mat.getStringAsInt("id",-1));
+      Item mat_id = inventory.items.get(mat.getStringAsInt("id",-1));
       int mat_amount = mat.getStringAsInt("amount",-1);
       matlist.add(new ItemStack(mat_id,mat_amount));
     }

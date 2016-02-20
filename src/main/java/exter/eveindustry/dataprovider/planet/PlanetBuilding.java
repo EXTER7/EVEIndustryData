@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 import exter.eveindustry.data.planet.IPlanetBuilding;
+import exter.eveindustry.dataprovider.inventory.InventoryDA;
 import exter.eveindustry.item.ItemStack;
-import exter.eveindustry.test.data.inventory.InventoryDA;
 import exter.tsl.TSLObject;
 
 public class PlanetBuilding implements IPlanetBuilding
@@ -17,10 +17,10 @@ public class PlanetBuilding implements IPlanetBuilding
   public final int Level;
   public final List<ItemStack> Materials;
  
-  public PlanetBuilding(TSLObject tsl)
+  public PlanetBuilding(TSLObject tsl, InventoryDA inventory)
   {
     ArrayList<ItemStack> matlist = new ArrayList<ItemStack>();
-    ProductItem = new ItemStack(InventoryDA.items.get(tsl.getStringAsInt("id",-1)),tsl.getStringAsInt("amount",-1));
+    ProductItem = new ItemStack(inventory.items.get(tsl.getStringAsInt("id",-1)),tsl.getStringAsInt("amount",-1));
     Level = tsl.getStringAsInt("level",-1);
     Tax = tsl.getStringAsInt("tax",-1);
     List<TSLObject> tsl_materials = tsl.getObjectList("in");
@@ -29,7 +29,7 @@ public class PlanetBuilding implements IPlanetBuilding
       int mat_id = mat_tsl.getStringAsInt("id",-1);
       int raw_amount = mat_tsl.getStringAsInt("amount",0);
 
-      matlist.add(new ItemStack(InventoryDA.items.get(mat_id), raw_amount));
+      matlist.add(new ItemStack(inventory.items.get(mat_id), raw_amount));
     }
     Materials = Collections.unmodifiableList(matlist);
   }

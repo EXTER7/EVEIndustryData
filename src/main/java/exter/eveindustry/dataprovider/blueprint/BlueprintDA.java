@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.util.zip.ZipFile;
 
 import exter.eveindustry.dataprovider.inventory.InventoryDA;
-import exter.eveindustry.test.data.cache.Cache;
+import exter.eveindustry.dataprovider.cache.Cache;
 import exter.tsl.InvalidTSLException;
 import exter.tsl.TSLObject;
 import exter.tsl.TSLReader;

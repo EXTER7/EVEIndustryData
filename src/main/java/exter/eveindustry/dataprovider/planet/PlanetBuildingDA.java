@@ -5,7 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipFile;
 
-import exter.eveindustry.test.data.cache.Cache;
+import exter.eveindustry.dataprovider.cache.Cache;
+import exter.eveindustry.dataprovider.inventory.InventoryDA;
 import exter.tsl.InvalidTSLException;
 import exter.tsl.TSLObject;
 import exter.tsl.TSLReader;
@@ -30,7 +31,7 @@ public class PlanetBuildingDA
           {
             raw.close();
             zip.close();
-            return new PlanetBuilding(new TSLObject(reader));
+            return new PlanetBuilding(new TSLObject(reader), inventory);
           } else
           {
             raw.close();
@@ -56,9 +57,11 @@ public class PlanetBuildingDA
   public final Cache<Integer, PlanetBuilding> buildings = new Cache<Integer, PlanetBuilding>(new ProductCacheMiss());
   
   private File eid_path;
+  private InventoryDA inventory;
   
-  public PlanetBuildingDA(File eid_zip)
+  public PlanetBuildingDA(File eid_zip, InventoryDA inventory)
   {
     this.eid_path = eid_zip;
+    this.inventory = inventory;
   }
 }
