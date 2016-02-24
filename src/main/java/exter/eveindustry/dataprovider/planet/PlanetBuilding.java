@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import exter.eveindustry.data.planet.IPlanetBuilding;
-import exter.eveindustry.dataprovider.inventory.InventoryDA;
+import exter.eveindustry.dataprovider.item.ItemDA;
 import exter.eveindustry.item.ItemStack;
 import exter.tsl.TSLObject;
 
@@ -17,7 +17,7 @@ public class PlanetBuilding implements IPlanetBuilding
   public final int Level;
   public final List<ItemStack> Materials;
  
-  public PlanetBuilding(TSLObject tsl, InventoryDA inventory)
+  public PlanetBuilding(TSLObject tsl, ItemDA inventory)
   {
     ArrayList<ItemStack> matlist = new ArrayList<ItemStack>();
     ProductItem = new ItemStack(inventory.items.get(tsl.getStringAsInt("id",-1)),tsl.getStringAsInt("amount",-1));

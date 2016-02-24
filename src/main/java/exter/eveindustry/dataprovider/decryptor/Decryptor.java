@@ -2,8 +2,8 @@ package exter.eveindustry.dataprovider.decryptor;
 
 import exter.eveindustry.data.decryptor.IDecryptor;
 import exter.eveindustry.data.inventory.IItem;
-import exter.eveindustry.dataprovider.inventory.InventoryDA;
-import exter.eveindustry.dataprovider.inventory.Item;
+import exter.eveindustry.dataprovider.item.Item;
+import exter.eveindustry.dataprovider.item.ItemDA;
 import exter.tsl.TSLObject;
 
 public class Decryptor implements IDecryptor
@@ -14,7 +14,7 @@ public class Decryptor implements IDecryptor
   public final int Runs;
   public final double Chance;
 
-  public Decryptor(TSLObject tsl,InventoryDA inventory)
+  public Decryptor(TSLObject tsl,ItemDA inventory)
   {
     Item = inventory.items.get(tsl.getStringAsInt("id",-1));
     ME = tsl.getStringAsInt("me",0);

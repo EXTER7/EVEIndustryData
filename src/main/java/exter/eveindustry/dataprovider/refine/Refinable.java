@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 import exter.eveindustry.data.refinable.IRefinable;
-import exter.eveindustry.dataprovider.inventory.InventoryDA;
-import exter.eveindustry.dataprovider.inventory.Item;
+import exter.eveindustry.dataprovider.item.Item;
+import exter.eveindustry.dataprovider.item.ItemDA;
 import exter.eveindustry.item.ItemStack;
 import exter.tsl.TSLObject;
 
@@ -16,7 +16,7 @@ public class Refinable implements IRefinable
   public final ItemStack RefineItem;
   public final int Skill;
 
-  public Refinable(TSLObject tsl,InventoryDA inventory)
+  public Refinable(TSLObject tsl,ItemDA inventory)
   {
 
     ArrayList<ItemStack> prodlist = new ArrayList<ItemStack>();

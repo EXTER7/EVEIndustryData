@@ -5,8 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipFile;
 
-import exter.eveindustry.dataprovider.inventory.InventoryDA;
 import exter.eveindustry.dataprovider.cache.Cache;
+import exter.eveindustry.dataprovider.index.Index;
+import exter.eveindustry.dataprovider.item.ItemDA;
 import exter.tsl.InvalidTSLException;
 import exter.tsl.TSLObject;
 import exter.tsl.TSLReader;
@@ -57,11 +58,15 @@ public class RefinableDA
   public final Cache<Integer, Refinable> refinables = new Cache<Integer, Refinable>(new RefineCacheMiss());
   
   private File eid_zip;
-  private InventoryDA inventory;
+  private ItemDA inventory;
   
-  public RefinableDA(File eid_zip,InventoryDA inventory)
+  public final Index index;
+  
+  public RefinableDA(File eid_zip,ItemDA inventory)
   {
     this.eid_zip = eid_zip;
     this.inventory = inventory;
+    this.index = new Index(eid_zip,"refine/index.tsl",inventory);
   }
+
 }

@@ -14,8 +14,9 @@ import exter.eveindustry.dataprovider.blueprint.InstallationGroup;
 import exter.eveindustry.dataprovider.blueprint.InventionInstallation;
 import exter.eveindustry.dataprovider.decryptor.Decryptor;
 import exter.eveindustry.dataprovider.decryptor.DecryptorDA;
-import exter.eveindustry.dataprovider.inventory.InventoryDA;
-import exter.eveindustry.dataprovider.inventory.Item;
+import exter.eveindustry.dataprovider.index.Index;
+import exter.eveindustry.dataprovider.item.Item;
+import exter.eveindustry.dataprovider.item.ItemDA;
 import exter.eveindustry.dataprovider.planet.Planet;
 import exter.eveindustry.dataprovider.planet.PlanetBuilding;
 import exter.eveindustry.dataprovider.planet.PlanetBuildingDA;
@@ -32,7 +33,7 @@ import exter.eveindustry.task.Task.Market;
 
 public class EVEDataProvider implements IEVEDataProvider
 {
-  private InventoryDA da_inventory;
+  private ItemDA da_inventory;
   private BlueprintDA da_blueprint;
   private InstallationDA da_installation;
   private DecryptorDA da_decryptor;
@@ -44,7 +45,7 @@ public class EVEDataProvider implements IEVEDataProvider
   
   public EVEDataProvider(File eid_zip)
   {
-    da_inventory = new InventoryDA(eid_zip);
+    da_inventory = new ItemDA(eid_zip);
     da_blueprint = new BlueprintDA(eid_zip,da_inventory);
     da_installation = new InstallationDA(eid_zip);
     da_decryptor = new DecryptorDA(eid_zip,da_inventory);
@@ -217,5 +218,30 @@ public class EVEDataProvider implements IEVEDataProvider
   public int getDefaultBlueprintTE(IBlueprint bp)
   {
     return 0;
+  }
+  
+  public Index getBlueprintIndex()
+  {
+    return da_blueprint.index;
+  }
+  
+  public Index getRefinableIndex()
+  {
+    return da_refinable.index;
+  }
+
+  public Index getReactionIndex()
+  {
+    return da_reaction.index;
+  }
+
+  public Index getMoonProductIndex()
+  {
+    return da_reaction.index_moon;
+  }
+  
+  public Index getPlanetProductIndex(boolean include_advanced)
+  {
+    return include_advanced?da_planetbuilding.index_adv:da_planetbuilding.index;
   }
 }

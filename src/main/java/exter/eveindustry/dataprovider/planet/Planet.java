@@ -7,7 +7,7 @@ import java.util.List;
 
 import exter.eveindustry.data.inventory.IItem;
 import exter.eveindustry.data.planet.IPlanet;
-import exter.eveindustry.dataprovider.inventory.InventoryDA;
+import exter.eveindustry.dataprovider.item.ItemDA;
 import exter.tsl.TSLObject;
 
 public class Planet implements IPlanet
@@ -17,7 +17,7 @@ public class Planet implements IPlanet
   public final int ID;
   public final boolean Advanced;
   
-  public Planet(TSLObject tsl,InventoryDA inventory)
+  public Planet(TSLObject tsl,ItemDA inventory)
   {
     ID = tsl.getStringAsInt("id",-1);
     TypeName = tsl.getString("name",null);

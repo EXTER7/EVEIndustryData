@@ -1,4 +1,4 @@
-package exter.eveindustry.dataprovider.inventory;
+package exter.eveindustry.dataprovider.item;
 
 import exter.eveindustry.data.inventory.IItem;
 import exter.tsl.TSLObject;
@@ -11,6 +11,7 @@ public class Item implements IItem
   public final double Volume;
   public final boolean Market;
   public final int MetaGroup;
+  public final int Icon;
   
   public final String NameLowercase;
 
@@ -39,6 +40,7 @@ public class Item implements IItem
     Volume = tsl.getStringAsFloat("vol", -1);
     Market = tsl.getStringAsInt("market",0) != 0;
     MetaGroup = tsl.getStringAsInt("mg", -1);
+    Icon = tsl.getStringAsInt("icon", -1);
     NameLowercase = Name.toLowerCase();
   }
 

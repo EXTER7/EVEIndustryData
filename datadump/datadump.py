@@ -50,6 +50,11 @@ for arg in sys.argv[1:]:
   if arg.startswith("--"):
     flags.add(arg)
 
+def mkdir(name):
+  try:
+    os.mkdir(name)
+  except OSError:
+    pass
   
 
 try:
@@ -57,31 +62,20 @@ try:
 except FileNotFoundError:
   pass
 
-try:
-  os.mkdir("eid")
-except OSError:
-  pass
-
-try:
-  os.mkdir("eid/blueprint")
-except OSError:
-  pass
-
-try:
-  os.mkdir("eid/refine")
-except OSError:
-  pass
-
-try:
-  os.mkdir("eid/planet")
-except OSError:
-  pass
-
-try:
-  os.mkdir("eid/reaction")
-except OSError:
-  pass
-
+mkdir("eid")
+mkdir("eid/blueprint")
+mkdir("eid/blueprint/installation")
+mkdir("eid/blueprint/installation/group")
+mkdir("eid/blueprint/installation/invention")
+mkdir("eid/refine")
+mkdir("eid/planet")
+mkdir("eid/reaction")
+mkdir("eid/item")
+mkdir("eid/item/group")
+mkdir("eid/item/category")
+mkdir("eid/item/metagroup")
+mkdir("eid/solarsystem")
+mkdir("eid/solarsystem/region")
 
 if os.path.isfile("sde/eve.db.bz2"):
   print("Extracting 'sde/eve.db.bz2' ... ",end="",flush=True)
@@ -286,44 +280,36 @@ for ins in Installation.get_invention_list(dbc):
       ins.relics = True 
     inv_installation_list[ins.id] = ins
     
-tslfile = TSLWriter("eid/blueprint/installations.tsl")
-tslfile.start_collection("installations")
 for gi in gi_list:
-  tslfile.start_collection("group")
-  tslfile.push_formatter()
-  tslfile.formatter.set_newline(False)
-  tslfile.put_value("id",gi.installation * 23537 + gi.group)
+  gid = gi.installation * 23537 + gi.group
+  tslfile = TSLWriter("eid/blueprint/installation/group/%i.tsl" % (gid))
+  tslfile.start_collection("insgroup")
+  tslfile.put_value("id",gid)
   tslfile.put_value("group",gi.group)
   tslfile.put_value("installation",gi.installation)
   tslfile.put_value("time",gi.time)
   tslfile.put_value("material",gi.material)
   tslfile.put_value("cost",gi.cost)
   tslfile.end_collection()
-  tslfile.pop_formatter()
 
 for key in installation_list:
   ins = installation_list[key]
+  tslfile = TSLWriter("eid/blueprint/installation/%i.tsl" % (key))
   tslfile.start_collection("installation")
-  tslfile.push_formatter()
-  tslfile.formatter.set_newline(False)
   tslfile.put_value("id",key)
   tslfile.put_value("name",ins.name)
   tslfile.end_collection()
-  tslfile.pop_formatter()
 
 for key in inv_installation_list:
   ins = inv_installation_list[key]
+  tslfile = TSLWriter("eid/blueprint/installation/invention/%i.tsl" % (key))
   tslfile.start_collection("invention")
-  tslfile.push_formatter()
-  tslfile.formatter.set_newline(False)
   tslfile.put_value("id",key)
   tslfile.put_value("name",ins.name)
   tslfile.put_value("time",ins.time)
   tslfile.put_value("cost",ins.cost)
   tslfile.put_value("relics",1 if ins.relics else 0)
   tslfile.end_collection()
-  tslfile.pop_formatter()
-tslfile.end_collection()
 
 print("Converting Refinables")
 ref_list = Index()
@@ -490,39 +476,35 @@ tslfile.end_collection()
 
 print("Converting Starmap")
 
+# Jove regions, inaccessible to players.
+jove_regions = [10000019, 10000017, 10000004]
+
 regions = SolarSystemRegion.get_list(dbc)
 systems = SolarSystem.get_list(dbc)
 rids = {}
-tslfile = TSLWriter("eid/starmap.tsl")
-tslfile.start_collection("starmap")
 prog = re.compile("[A-Z]-R[0-9]{5}$")
-regions.append(SolarSystemRegion([990000000,"WH-Space"]))
+regions.append(SolarSystemRegion([42,"WH-Space"]))
 for reg in regions:
   rids[reg.id] = reg
-  if not prog.match(reg.name):
-    tslfile.start_collection("r")
-    tslfile.push_formatter()
-    tslfile.formatter.set_newline(False)
+  if not prog.match(reg.name) and reg.id not in jove_regions:
+    tslfile = TSLWriter("eid/solarsystem/region/%i.tsl" % (reg.id))
+    tslfile.start_collection("region")
     tslfile.put_value("id",reg.id)
     tslfile.put_value("name",reg.name)
     tslfile.end_collection()
-    tslfile.pop_formatter()
 
 for ss in systems:
   # Condense all WH space system into a single region
   ssrid = ss.region
   if prog.match(rids[ssrid].name):
-    ssrid = 990000000
+    ssrid = 42
   if ss.region in rids:
-    tslfile.start_collection("s")
-    tslfile.push_formatter()
-    tslfile.formatter.set_newline(False)
+    tslfile = TSLWriter("eid/solarsystem/%i.tsl" % (reg.id))
+    tslfile.start_collection("system")
     tslfile.put_value("id",ss.id)
     tslfile.put_value("name",ss.name)
     tslfile.put_value("region",int(ssrid))
-    tslfile.end_collection()
     tslfile.pop_formatter()
-tslfile.end_collection()
 
 for s in skills:
   add_to_inventory_tsl(s)
@@ -537,11 +519,9 @@ categories = {}
 metagroups = {}
 
 
-tslfile = TSLWriter("eid/inventory.tsl")
-tslfile.start_collection("inventory")
 for i in inventory_tsl:
-  icon_id = -1
   item = inventory_tsl[i]
+  icon_id = -1
   if process_icons:
     try:
       icon_hash = hashlib.md5(open("sde/Types/%i_64.png" % (i), 'rb').read()).hexdigest()
@@ -572,9 +552,8 @@ for i in inventory_tsl:
   if item.meta_group not in metagroups.keys():
     g = MetaGroup(dbc,item.meta_group)
     metagroups[item.meta_group] = g
-  tslfile.start_collection("i")
-  tslfile.push_formatter()
-  tslfile.formatter.set_newline(False)
+  tslfile = TSLWriter("eid/item/%i.tsl" % (item.id))
+  tslfile.start_collection("item")
   tslfile.put_value("id",i)
   tslfile.put_value("gid",item.group)
   tslfile.put_value("name",item.name)
@@ -584,15 +563,13 @@ for i in inventory_tsl:
   tslfile.put_value("market",1 if item.market_group >=0 else 0)
   tslfile.put_value("mg",item.meta_group)
   tslfile.end_collection()
-  tslfile.pop_formatter()
 
 for i in groups:
   gr = groups[i]
+  tslfile = TSLWriter("eid/item/group/%i.tsl" % (i))
   if gr.blueprints == 1:
     categories[gr.category].blueprints = 1
-  tslfile.start_collection("g")
-  tslfile.push_formatter()
-  tslfile.formatter.set_newline(False)
+  tslfile.start_collection("group")
   tslfile.put_value("id",int(i))
   tslfile.put_value("name",gr.name)
   tslfile.put_value("cid",int(gr.category))
@@ -600,33 +577,26 @@ for i in groups:
     tslfile.put_value("icon",int(gr.icon))
   tslfile.put_value("blueprints",int(gr.blueprints))
   tslfile.end_collection()
-  tslfile.pop_formatter()
 
 
 for i in categories:
   cat = categories[i]
-  tslfile.start_collection("c")
-  tslfile.push_formatter()
-  tslfile.formatter.set_newline(False)
+  tslfile = TSLWriter("eid/item/category/%i.tsl" % (i))
+  tslfile.start_collection("category")
   tslfile.put_value("id",int(i))
   tslfile.put_value("name",cat.name)
   if process_icons:
     tslfile.put_value("icon",int(cat.icon))
   tslfile.put_value("blueprints",int(cat.blueprints))
   tslfile.end_collection()
-  tslfile.pop_formatter()
 
 for i in metagroups:
   m = metagroups[i]
-  tslfile.start_collection("m")
-  tslfile.push_formatter()
-  tslfile.formatter.set_newline(False)
+  tslfile = TSLWriter("eid/item/metagroup/%i.tsl" % (i))
+  tslfile.start_collection("metagroup")
   tslfile.put_value("id",int(i))
   tslfile.put_value("name",m.name)
   tslfile.end_collection()
-  tslfile.pop_formatter()
-
-tslfile.end_collection()
 
 database.close()
 

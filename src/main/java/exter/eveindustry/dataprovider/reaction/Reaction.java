@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 
 import exter.eveindustry.data.reaction.IReaction;
+import exter.eveindustry.dataprovider.item.Item;
+import exter.eveindustry.dataprovider.item.ItemDA;
 import exter.eveindustry.item.ItemStack;
-import exter.eveindustry.dataprovider.inventory.InventoryDA;
-import exter.eveindustry.dataprovider.inventory.Item;
 import exter.tsl.TSLObject;
 
 public class Reaction implements IReaction
@@ -16,7 +16,7 @@ public class Reaction implements IReaction
   public final List<ItemStack> Outputs;
   public final int ID;
 
-  public Reaction(TSLObject tsl,InventoryDA inventory)
+  public Reaction(TSLObject tsl,ItemDA inventory)
   {
     ID = tsl.getStringAsInt("id",-1);
     

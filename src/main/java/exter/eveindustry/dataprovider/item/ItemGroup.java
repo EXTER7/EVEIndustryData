@@ -1,4 +1,4 @@
-package exter.eveindustry.dataprovider.inventory;
+package exter.eveindustry.dataprovider.item;
 
 import exter.tsl.TSLObject;
 

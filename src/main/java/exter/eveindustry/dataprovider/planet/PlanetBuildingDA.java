@@ -6,7 +6,8 @@ import java.io.InputStream;
 import java.util.zip.ZipFile;
 
 import exter.eveindustry.dataprovider.cache.Cache;
-import exter.eveindustry.dataprovider.inventory.InventoryDA;
+import exter.eveindustry.dataprovider.index.Index;
+import exter.eveindustry.dataprovider.item.ItemDA;
 import exter.tsl.InvalidTSLException;
 import exter.tsl.TSLObject;
 import exter.tsl.TSLReader;
@@ -57,11 +58,15 @@ public class PlanetBuildingDA
   public final Cache<Integer, PlanetBuilding> buildings = new Cache<Integer, PlanetBuilding>(new ProductCacheMiss());
   
   private File eid_path;
-  private InventoryDA inventory;
+  private ItemDA inventory;
+  public final Index index;
+  public final Index index_adv;
   
-  public PlanetBuildingDA(File eid_zip, InventoryDA inventory)
+  public PlanetBuildingDA(File eid_zip, ItemDA inventory)
   {
     this.eid_path = eid_zip;
     this.inventory = inventory;
+    this.index = new Index(eid_zip,"planet/index.tsl",inventory);
+    this.index_adv = new Index(eid_zip,"planet/index_advanced.tsl",inventory);
   }
 }

@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipFile;
 
-import exter.eveindustry.dataprovider.inventory.InventoryDA;
+import exter.eveindustry.dataprovider.item.ItemDA;
 import exter.tsl.InvalidTSLException;
 import exter.tsl.TSLObject;
 import exter.tsl.TSLReader;
@@ -16,7 +16,7 @@ public class StarbaseTowerDA
 {
   public final Map<Integer, StarbaseTower> towers = new HashMap<Integer, StarbaseTower>();
 
-  public StarbaseTowerDA(File eid_zip,InventoryDA inventory)
+  public StarbaseTowerDA(File eid_zip,ItemDA inventory)
   {
     ZipFile zip;
     try

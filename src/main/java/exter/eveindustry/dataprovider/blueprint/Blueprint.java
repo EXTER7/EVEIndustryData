@@ -12,8 +12,8 @@ import java.util.TreeSet;
 
 import exter.eveindustry.data.blueprint.IBlueprint;
 import exter.eveindustry.data.inventory.IItem;
-import exter.eveindustry.dataprovider.inventory.InventoryDA;
-import exter.eveindustry.dataprovider.inventory.Item;
+import exter.eveindustry.dataprovider.item.Item;
+import exter.eveindustry.dataprovider.item.ItemDA;
 import exter.eveindustry.item.ItemStack;
 import exter.tsl.TSLObject;
 
@@ -27,7 +27,7 @@ public class Blueprint implements IBlueprint
       private final int Runs;
       private final double Chance;
 
-      public Relic(TSLObject tsl,InventoryDA inventory)
+      public Relic(TSLObject tsl,ItemDA inventory)
       {
         RelicItem = inventory.items.get(tsl.getStringAsInt("id",-1));
         Runs = tsl.getStringAsInt("runs",0);
@@ -79,7 +79,7 @@ public class Blueprint implements IBlueprint
     private final Map<Integer,Relic> Relics;
     private final Set<Integer> RelicList;
     
-    public Invention(TSLObject tsl,InventoryDA inventory)
+    public Invention(TSLObject tsl,ItemDA inventory)
     {
       ArrayList<ItemStack> matlist = new ArrayList<ItemStack>();
       Time = tsl.getStringAsInt("time",-1);
@@ -183,7 +183,7 @@ public class Blueprint implements IBlueprint
   public final Set<Integer> Skills;
   
   
-  public Blueprint(TSLObject tsl,InventoryDA inventory)
+  public Blueprint(TSLObject tsl,ItemDA inventory)
   {
     List<ItemStack> matlist = new ArrayList<ItemStack>();
 

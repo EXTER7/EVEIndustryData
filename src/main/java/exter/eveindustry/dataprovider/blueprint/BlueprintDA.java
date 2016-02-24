@@ -5,8 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipFile;
 
-import exter.eveindustry.dataprovider.inventory.InventoryDA;
 import exter.eveindustry.dataprovider.cache.Cache;
+import exter.eveindustry.dataprovider.index.Index;
+import exter.eveindustry.dataprovider.item.ItemDA;
 import exter.tsl.InvalidTSLException;
 import exter.tsl.TSLObject;
 import exter.tsl.TSLReader;
@@ -56,11 +57,14 @@ public class BlueprintDA
   public final Cache<Integer, Blueprint> blueprints = new Cache<Integer, Blueprint>(new BlueprintMissListener());
 
   private File eid_zip;
-  private InventoryDA inventory;
+  private ItemDA inventory;
   
-  public BlueprintDA(File eid_zip,InventoryDA inventory)
+  public final Index index;
+  
+  public BlueprintDA(File eid_zip,ItemDA inventory)
   {
     this.eid_zip = eid_zip;
     this.inventory = inventory;
+    this.index = new Index(eid_zip,"blueprint/index.tsl",inventory);
   }
 }

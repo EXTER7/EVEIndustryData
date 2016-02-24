@@ -1,16 +1,15 @@
-package exter.eveindustry.dataprovider.inventory;
+package exter.eveindustry.dataprovider.starmap;
 
 import exter.tsl.TSLObject;
 
-public class ItemMetaGroup
+public class Region
 {
   public final int ID;
   public final String Name;
-
-  public ItemMetaGroup(TSLObject tsl)
+  
+  public Region(TSLObject tsl)
   {
     ID = tsl.getStringAsInt("id", -1);
     Name = tsl.getString("name", null);
   }
-
 }
