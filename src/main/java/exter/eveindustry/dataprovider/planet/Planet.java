@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
 import exter.eveindustry.data.inventory.IItem;
 import exter.eveindustry.data.planet.IPlanet;
 import exter.eveindustry.dataprovider.item.ItemDA;

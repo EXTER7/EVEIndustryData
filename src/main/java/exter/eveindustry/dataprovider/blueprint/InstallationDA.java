@@ -1,102 +1,70 @@
 package exter.eveindustry.dataprovider.blueprint;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.ZipFile;
 
+import exter.eveindustry.dataprovider.cache.Cache;
+import exter.eveindustry.dataprovider.filesystem.IFileSystemHandler;
 import exter.tsl.InvalidTSLException;
 import exter.tsl.TSLObject;
 import exter.tsl.TSLReader;
 
 public class InstallationDA
 {
-  public final Map<Integer, InventionInstallation> invention_installations = new HashMap<Integer, InventionInstallation>();
-  public final Map<Integer, InstallationGroup> installation_groups = new HashMap<Integer, InstallationGroup>();
-  public final Map<Integer, List<InstallationGroup>> group_installations = new HashMap<Integer, List<InstallationGroup>>();
-  
-  public InstallationDA(File eid_zip)
+  private class InstallationGroupCacheMiss implements Cache.IMissListener<Integer, InstallationGroup>, IFileSystemHandler.IReadHandler<InstallationGroup>
   {
-    ZipFile zip;
-    try
+    @Override
+    public InstallationGroup onCacheMiss(Integer id)
     {
-      zip = new ZipFile(eid_zip);
+      return fs.readFile("blueprint/installation/group/" + String.valueOf(id) + ".tsl", this);
+    }
 
-      TSLReader reader = null;
-      InputStream raw = null;
+    @Override
+    public InstallationGroup readFile(InputStream stream) throws IOException
+    {
       try
       {
-        raw = zip.getInputStream(zip.getEntry("blueprint/installations.tsl"));
-        reader = new TSLReader(raw);
-      } catch(IOException e)
-      {
-        throw new RuntimeException(e);
-      }
-
-      try
-      {
+        TSLReader reader = new TSLReader(stream);
         reader.moveNext();
-
-        while(true)
-        {
-          reader.moveNext();
-          TSLReader.State type = reader.getState();
-          if(type == TSLReader.State.ENDOBJECT)
-          {
-            break;
-          }
-
-          if(type == TSLReader.State.OBJECT)
-          {
-            if(reader.getName().equals("group"))
-            {
-              TSLObject obj = new TSLObject(reader);
-              InstallationGroup ins = new InstallationGroup(obj);
-              installation_groups.put(ins.ID, ins);
-              List<InstallationGroup> inslist = group_installations.get(ins.GroupID);
-              if(inslist == null)
-              {
-                inslist = new ArrayList<InstallationGroup>();
-                group_installations.put(ins.GroupID,inslist);
-              }
-              inslist.add(new InstallationGroup(obj));
-            } else if(reader.getName().equals("invention"))
-            {
-              TSLObject obj = new TSLObject(reader);
-              invention_installations.put(obj.getStringAsInt("id", -1), new InventionInstallation(obj));
-            } else
-            {
-              reader.skipObject();
-            }
-          }
-        }
+        TSLObject obj = new TSLObject(reader);
+        return new InstallationGroup(obj);
       } catch(InvalidTSLException e)
       {
-        raw.close();
-        zip.close();
-        throw new RuntimeException(e);
-      } catch(IOException e)
-      {
-        raw.close();
-        zip.close();
-        throw new RuntimeException(e);
+        return null;
       }
+    }
+  }
 
+  private class InventionInstallationCacheMiss implements Cache.IMissListener<Integer, InventionInstallation>, IFileSystemHandler.IReadHandler<InventionInstallation>
+  {
+    @Override
+    public InventionInstallation onCacheMiss(Integer id)
+    {
+      return fs.readFile("blueprint/installation/invention/" + String.valueOf(id) + ".tsl", this);
+    }
+
+    @Override
+    public InventionInstallation readFile(InputStream stream) throws IOException
+    {
       try
       {
-        raw.close();
-      } catch(IOException e)
+        TSLReader reader = new TSLReader(stream);
+        reader.moveNext();
+        TSLObject obj = new TSLObject(reader);
+        return new InventionInstallation(obj);
+      } catch(InvalidTSLException e)
       {
-        throw new RuntimeException(e);
+        return null;
       }
-      zip.close();
-    } catch(IOException e1)
-    {
-      throw new RuntimeException(e1);
     }
+  }
+
+  public final Cache<Integer, InstallationGroup> installation_groups = new Cache<Integer, InstallationGroup>(new InstallationGroupCacheMiss());
+  public final Cache<Integer, InventionInstallation> invention_installations = new Cache<Integer, InventionInstallation>(new InventionInstallationCacheMiss());
+  IFileSystemHandler fs;
+  
+  public InstallationDA(IFileSystemHandler fs)
+  {
+    this.fs = fs;
   }
 }

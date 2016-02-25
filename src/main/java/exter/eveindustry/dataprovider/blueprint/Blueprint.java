@@ -178,18 +178,19 @@ public class Blueprint implements IBlueprint
   public final ItemStack Product;
   public final List<ItemStack> Materials;
   public final int ManufactureTime;
+  public final InstallationGroup Installation;
  
   public final Invention Invention;
   public final Set<Integer> Skills;
   
   
-  public Blueprint(TSLObject tsl,ItemDA inventory)
+  public Blueprint(TSLObject tsl,ItemDA inventory,InstallationDA installations)
   {
     List<ItemStack> matlist = new ArrayList<ItemStack>();
 
     Product = new ItemStack(inventory.items.get(tsl.getStringAsInt("id",-1)),tsl.getStringAsInt("amount",-1));
     ManufactureTime = tsl.getStringAsInt("time",-1);
-
+    Installation = installations.installation_groups.get(tsl.getStringAsInt("installation",-1));
     List<TSLObject> tsl_materials = tsl.getObjectList("material");
 
     for(TSLObject mat_tsl:tsl_materials)

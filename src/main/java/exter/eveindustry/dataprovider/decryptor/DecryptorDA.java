@@ -1,63 +1,53 @@
 package exter.eveindustry.dataprovider.decryptor;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.ZipFile;
 
+import exter.eveindustry.dataprovider.filesystem.IFileSystemHandler;
 import exter.eveindustry.dataprovider.item.ItemDA;
 import exter.tsl.InvalidTSLException;
 import exter.tsl.TSLObject;
 import exter.tsl.TSLReader;
 
-public class DecryptorDA
+public class DecryptorDA implements IFileSystemHandler.IReadHandler<Object>
 {
   public final Map<Integer, Decryptor> decryptors = new HashMap<Integer, Decryptor>();
 
-  public DecryptorDA(File eid_zip,ItemDA inventory)
+  private final ItemDA inventory;
+  
+  public DecryptorDA(IFileSystemHandler fs,ItemDA inventory)
   {
-    ZipFile zip;
+    this.inventory = inventory;
+    fs.readFile("blueprint/decryptors.tsl", this);
+  }
+
+  @Override
+  public Object readFile(InputStream stream) throws IOException
+  {
     try
     {
-      zip = new ZipFile(eid_zip);
-      TSLReader tsl = null;
-      InputStream raw = null;
-      try
+      TSLReader tsl = new TSLReader(stream);
+      tsl.moveNext();
+      while(true)
       {
-        raw = zip.getInputStream(zip.getEntry("blueprint/decryptors.tsl"));
-        tsl = new TSLReader(raw);
-
         tsl.moveNext();
-
-        while(true)
+        TSLReader.State type = tsl.getState();
+        if(type == TSLReader.State.ENDOBJECT)
         {
-          tsl.moveNext();
-          TSLReader.State type = tsl.getState();
-          if(type == TSLReader.State.ENDOBJECT)
-          {
-            break;
-          }
-
-          if(type == TSLReader.State.OBJECT)
-          {
-            Decryptor d = new Decryptor(new TSLObject(tsl),inventory);
-            decryptors.put(d.getID(), d);
-          }
+          break;
         }
-        raw.close();
-      } catch(InvalidTSLException e)
-      {
-        throw new RuntimeException(e);
-      } catch(IOException e)
-      {
-        throw new RuntimeException(e);
+        if(type == TSLReader.State.OBJECT)
+        {
+          Decryptor d = new Decryptor(new TSLObject(tsl),inventory);
+          decryptors.put(d.getID(), d);
+        }
       }
-      zip.close();
-    } catch(IOException e1)
+    } catch(InvalidTSLException e)
     {
-      throw new RuntimeException(e1);
+      throw new RuntimeException(e);
     }
+    return null;
   }
 }

@@ -1,6 +1,5 @@
 package exter.eveindustry.dataprovider;
 
-import java.io.File;
 import java.math.BigDecimal;
 
 import exter.eveindustry.data.IEVEDataProvider;
@@ -14,6 +13,7 @@ import exter.eveindustry.dataprovider.blueprint.InstallationGroup;
 import exter.eveindustry.dataprovider.blueprint.InventionInstallation;
 import exter.eveindustry.dataprovider.decryptor.Decryptor;
 import exter.eveindustry.dataprovider.decryptor.DecryptorDA;
+import exter.eveindustry.dataprovider.filesystem.IFileSystemHandler;
 import exter.eveindustry.dataprovider.index.Index;
 import exter.eveindustry.dataprovider.item.Item;
 import exter.eveindustry.dataprovider.item.ItemDA;
@@ -43,17 +43,17 @@ public class EVEDataProvider implements IEVEDataProvider
   private RefinableDA da_refinable;
   private StarbaseTowerDA da_tower;
   
-  public EVEDataProvider(File eid_zip)
+  public EVEDataProvider(IFileSystemHandler fs)
   {
-    da_inventory = new ItemDA(eid_zip);
-    da_blueprint = new BlueprintDA(eid_zip,da_inventory);
-    da_installation = new InstallationDA(eid_zip);
-    da_decryptor = new DecryptorDA(eid_zip,da_inventory);
-    da_planetbuilding = new PlanetBuildingDA(eid_zip,da_inventory);
-    da_planet = new PlanetDA(eid_zip,da_inventory);
-    da_reaction = new ReactionDA(eid_zip,da_inventory);
-    da_refinable = new RefinableDA(eid_zip,da_inventory);
-    da_tower = new StarbaseTowerDA(eid_zip,da_inventory);
+    da_inventory = new ItemDA(fs);
+    da_installation = new InstallationDA(fs);
+    da_blueprint = new BlueprintDA(fs,da_inventory,da_installation);
+    da_decryptor = new DecryptorDA(fs,da_inventory);
+    da_planetbuilding = new PlanetBuildingDA(fs,da_inventory);
+    da_planet = new PlanetDA(fs,da_inventory);
+    da_reaction = new ReactionDA(fs,da_inventory);
+    da_refinable = new RefinableDA(fs,da_inventory);
+    da_tower = new StarbaseTowerDA(fs,da_inventory);
   }
   
   @Override
@@ -77,14 +77,7 @@ public class EVEDataProvider implements IEVEDataProvider
   @Override
   public InstallationGroup getDefaultInstallation(IBlueprint blueprint)
   {
-    for(InstallationGroup ig:da_installation.group_installations.get(blueprint.getProduct().item.getGroupID()))
-    {
-      if(ig.InstallationID == 6)
-      {
-        return ig;
-      }
-    }
-    return null;
+    return ((Blueprint)blueprint).Installation;
   }
 
   @Override

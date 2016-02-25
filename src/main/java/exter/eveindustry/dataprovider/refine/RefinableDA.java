@@ -1,11 +1,10 @@
 package exter.eveindustry.dataprovider.refine;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.ZipFile;
 
 import exter.eveindustry.dataprovider.cache.Cache;
+import exter.eveindustry.dataprovider.filesystem.IFileSystemHandler;
 import exter.eveindustry.dataprovider.index.Index;
 import exter.eveindustry.dataprovider.item.ItemDA;
 import exter.tsl.InvalidTSLException;
@@ -14,41 +13,23 @@ import exter.tsl.TSLReader;
 
 public class RefinableDA
 {
-  private class RefineCacheMiss implements Cache.IMissListener<Integer, Refinable>
+  private class RefineCacheMiss implements Cache.IMissListener<Integer, Refinable>, IFileSystemHandler.IReadHandler<Refinable>
   {
     @Override
     public Refinable onCacheMiss(Integer refine)
     {
-      ZipFile zip;
+      return fs.readFile("refine/" + String.valueOf(refine) + ".tsl", this);
+    }
+
+    @Override
+    public Refinable readFile(InputStream stream) throws IOException
+    {
       try
       {
-        zip = new ZipFile(eid_zip);
-        try
-        {
-          InputStream raw = zip.getInputStream(zip.getEntry("refine/" + String.valueOf(refine) + ".tsl"));
-          TSLReader reader = new TSLReader(raw);
-          reader.moveNext();
-          if(reader.getState() == TSLReader.State.OBJECT && reader.getName().equals("refine"))
-          {
-            raw.close();
-            zip.close();
-            return new Refinable(new TSLObject(reader),inventory);
-          } else
-          {
-            raw.close();
-            zip.close();
-            return null;
-          }
-        } catch(InvalidTSLException e)
-        {
-          zip.close();
-          return null;
-        } catch(IOException e)
-        {
-          zip.close();
-          return null;
-        }
-      } catch(IOException e1)
+        TSLReader reader = new TSLReader(stream);
+        reader.moveNext();
+        return new Refinable(new TSLObject(reader),inventory);
+      } catch(InvalidTSLException e)
       {
         return null;
       }
@@ -57,16 +38,16 @@ public class RefinableDA
 
   public final Cache<Integer, Refinable> refinables = new Cache<Integer, Refinable>(new RefineCacheMiss());
   
-  private File eid_zip;
+  private IFileSystemHandler fs;
   private ItemDA inventory;
   
   public final Index index;
   
-  public RefinableDA(File eid_zip,ItemDA inventory)
+  public RefinableDA(IFileSystemHandler fs,ItemDA inventory)
   {
-    this.eid_zip = eid_zip;
+    this.fs = fs;
     this.inventory = inventory;
-    this.index = new Index(eid_zip,"refine/index.tsl",inventory);
+    this.index = new Index(fs,"refine/index.tsl");
   }
 
 }

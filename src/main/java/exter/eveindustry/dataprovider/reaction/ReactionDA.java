@@ -1,11 +1,10 @@
 package exter.eveindustry.dataprovider.reaction;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.ZipFile;
 
 import exter.eveindustry.dataprovider.cache.Cache;
+import exter.eveindustry.dataprovider.filesystem.IFileSystemHandler;
 import exter.eveindustry.dataprovider.index.Index;
 import exter.eveindustry.dataprovider.item.ItemDA;
 import exter.tsl.InvalidTSLException;
@@ -14,42 +13,23 @@ import exter.tsl.TSLReader;
 
 public class ReactionDA
 {
-  private class ReactionCacheMiss implements Cache.IMissListener<Integer, Reaction>
+  private class ReactionCacheMiss implements Cache.IMissListener<Integer, Reaction>, IFileSystemHandler.IReadHandler<Reaction>
   {
     @Override
     public Reaction onCacheMiss(Integer rid)
     {
-      ZipFile zip;
+      return fs.readFile("reaction/" + String.valueOf(rid) + ".tsl", this);
+    }
+
+    @Override
+    public Reaction readFile(InputStream stream) throws IOException
+    {
       try
       {
-        zip = new ZipFile(eid_zip);
-        try
-        {
-          InputStream raw = zip.getInputStream(zip.getEntry("reaction/" + String.valueOf(rid) + ".tsl"));
-
-          TSLReader reader = new TSLReader(raw);
-          reader.moveNext();
-          if(reader.getState() == TSLReader.State.OBJECT && reader.getName().equals("reaction"))
-          {
-            raw.close();
-            zip.close();
-            return new Reaction(new TSLObject(reader),inventory);
-          } else
-          {
-            raw.close();
-            zip.close();
-            return null;
-          }
-        } catch(InvalidTSLException e)
-        {
-          zip.close();
-          return null;
-        } catch(IOException e)
-        {
-          zip.close();
-          return null;
-        }
-      } catch(IOException e1)
+        TSLReader reader = new TSLReader(stream);
+        reader.moveNext();
+        return new Reaction(new TSLObject(reader),inventory);
+      } catch(InvalidTSLException e)
       {
         return null;
       }
@@ -58,16 +38,16 @@ public class ReactionDA
 
   public final Cache<Integer, Reaction> reactions = new Cache<Integer, Reaction>(new ReactionCacheMiss());
 
-  private File eid_zip;
+  private IFileSystemHandler fs;
   private ItemDA inventory;
   public final Index index;
   public final Index index_moon;
   
-  public ReactionDA(File eid_zip, ItemDA inventory)
+  public ReactionDA(IFileSystemHandler fs, ItemDA inventory)
   {
-    this.eid_zip = eid_zip;
+    this.fs = fs;
     this.inventory = inventory;
-    this.index = new Index(eid_zip,"reaction/index.tsl",inventory);
-    this.index_moon = new Index(eid_zip,"reaction/index_moon.tsl",inventory);
+    this.index = new Index(fs, "reaction/index.tsl");
+    this.index_moon = new Index(fs, "reaction/index_moon.tsl");
   }
 }

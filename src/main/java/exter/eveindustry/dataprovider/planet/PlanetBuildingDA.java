@@ -1,11 +1,10 @@
 package exter.eveindustry.dataprovider.planet;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.ZipFile;
 
 import exter.eveindustry.dataprovider.cache.Cache;
+import exter.eveindustry.dataprovider.filesystem.IFileSystemHandler;
 import exter.eveindustry.dataprovider.index.Index;
 import exter.eveindustry.dataprovider.item.ItemDA;
 import exter.tsl.InvalidTSLException;
@@ -14,41 +13,23 @@ import exter.tsl.TSLReader;
 
 public class PlanetBuildingDA
 {
-  private class ProductCacheMiss implements Cache.IMissListener<Integer, PlanetBuilding>
+  private class ProductCacheMiss implements Cache.IMissListener<Integer, PlanetBuilding>, IFileSystemHandler.IReadHandler<PlanetBuilding>
   {
     @Override
     public PlanetBuilding onCacheMiss(Integer pid)
     {
-      ZipFile zip;
+      return fs.readFile("planet/" + String.valueOf(pid) + ".tsl",this);
+    }
+
+    @Override
+    public PlanetBuilding readFile(InputStream stream) throws IOException
+    {
       try
       {
-        zip = new ZipFile(eid_path);
-        try
-        {
-          InputStream raw = zip.getInputStream(zip.getEntry("planet/" + String.valueOf(pid) + ".tsl"));
-          TSLReader reader = new TSLReader(raw);
-          reader.moveNext();
-          if(reader.getState() == TSLReader.State.OBJECT && reader.getName().equals("planetbuilding"))
-          {
-            raw.close();
-            zip.close();
-            return new PlanetBuilding(new TSLObject(reader), inventory);
-          } else
-          {
-            raw.close();
-            zip.close();
-            return null;
-          }
-        } catch(InvalidTSLException e)
-        {
-          zip.close();
-          return null;
-        } catch(IOException e)
-        {
-          zip.close();
-          return null;
-        }
-      } catch(IOException e1)
+        TSLReader reader = new TSLReader(stream);
+        reader.moveNext();
+        return new PlanetBuilding(new TSLObject(reader), inventory);
+      } catch(InvalidTSLException e)
       {
         return null;
       }
@@ -57,16 +38,16 @@ public class PlanetBuildingDA
 
   public final Cache<Integer, PlanetBuilding> buildings = new Cache<Integer, PlanetBuilding>(new ProductCacheMiss());
   
-  private File eid_path;
+  private IFileSystemHandler fs;
   private ItemDA inventory;
   public final Index index;
   public final Index index_adv;
   
-  public PlanetBuildingDA(File eid_zip, ItemDA inventory)
+  public PlanetBuildingDA(IFileSystemHandler fs, ItemDA inventory)
   {
-    this.eid_path = eid_zip;
+    this.fs = fs;
     this.inventory = inventory;
-    this.index = new Index(eid_zip,"planet/index.tsl",inventory);
-    this.index_adv = new Index(eid_zip,"planet/index_advanced.tsl",inventory);
+    this.index = new Index(fs,"planet/index.tsl");
+    this.index_adv = new Index(fs,"planet/index_advanced.tsl");
   }
 }
