@@ -2,6 +2,8 @@ package exter.eveindustry.dataprovider.item;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
+import java.util.List;
 
 import exter.eveindustry.dataprovider.cache.Cache;
 import exter.eveindustry.dataprovider.filesystem.IFileSystemHandler;
@@ -106,6 +108,110 @@ public class ItemDA
       }
     }
   }
+  
+  public class ItemIterator implements Iterator<Item>
+  {
+    private final ItemCacheMiss loader;
+    private final List<String> files;
+    private int index;
+
+    public ItemIterator()
+    {
+      loader = new ItemCacheMiss();
+      files = fs.listDirectoryFiles("item");
+      index = 0;
+    }
+    
+    @Override
+    public boolean hasNext()
+    {
+      return index < files.size();
+    }
+
+    @Override
+    public Item next()
+    {
+      return fs.readFile(files.get(index++), loader);
+    }
+  }
+
+  public class ItemGroupIterator implements Iterator<ItemGroup>
+  {
+    private final ItemGroupCacheMiss loader;
+    private final List<String> files;
+    private int index;
+
+    public ItemGroupIterator()
+    {
+      loader = new ItemGroupCacheMiss();
+      files = fs.listDirectoryFiles("item/group");
+      index = 0;
+    }
+    
+    @Override
+    public boolean hasNext()
+    {
+      return index < files.size();
+    }
+
+    @Override
+    public ItemGroup next()
+    {
+      return fs.readFile(files.get(index++), loader);
+    }
+  }
+
+  public class ItemCategoryIterator implements Iterator<ItemCategory>
+  {
+    private final ItemCategoryCacheMiss loader;
+    private final List<String> files;
+    private int index;
+
+    public ItemCategoryIterator()
+    {
+      loader = new ItemCategoryCacheMiss();
+      files = fs.listDirectoryFiles("item/category");
+      index = 0;
+    }
+    
+    @Override
+    public boolean hasNext()
+    {
+      return index < files.size();
+    }
+
+    @Override
+    public ItemCategory next()
+    {
+      return fs.readFile(files.get(index++), loader);
+    }
+  }
+
+  public class ItemMetaGroupIterator implements Iterator<ItemMetaGroup>
+  {
+    private final ItemMetaGroupCacheMiss loader;
+    private final List<String> files;
+    private int index;
+
+    public ItemMetaGroupIterator()
+    {
+      loader = new ItemMetaGroupCacheMiss();
+      files = fs.listDirectoryFiles("item/metagroup");
+      index = 0;
+    }
+    
+    @Override
+    public boolean hasNext()
+    {
+      return index < files.size();
+    }
+
+    @Override
+    public ItemMetaGroup next()
+    {
+      return fs.readFile(files.get(index++), loader);
+    }
+  }
 
   public final Cache<Integer, Item> items = new Cache<Integer, Item>(new ItemCacheMiss());
   public final Cache<Integer, ItemGroup> groups = new Cache<Integer, ItemGroup>(new ItemGroupCacheMiss());
@@ -117,4 +223,5 @@ public class ItemDA
   {
     this.fs = fs;
   }
+  
 }

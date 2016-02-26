@@ -1,6 +1,7 @@
 package exter.eveindustry.dataprovider;
 
 import java.math.BigDecimal;
+import java.util.Iterator;
 
 import exter.eveindustry.data.IEVEDataProvider;
 import exter.eveindustry.data.blueprint.IBlueprint;
@@ -16,7 +17,10 @@ import exter.eveindustry.dataprovider.decryptor.DecryptorDA;
 import exter.eveindustry.dataprovider.filesystem.IFileSystemHandler;
 import exter.eveindustry.dataprovider.index.Index;
 import exter.eveindustry.dataprovider.item.Item;
+import exter.eveindustry.dataprovider.item.ItemCategory;
 import exter.eveindustry.dataprovider.item.ItemDA;
+import exter.eveindustry.dataprovider.item.ItemGroup;
+import exter.eveindustry.dataprovider.item.ItemMetaGroup;
 import exter.eveindustry.dataprovider.planet.Planet;
 import exter.eveindustry.dataprovider.planet.PlanetBuilding;
 import exter.eveindustry.dataprovider.planet.PlanetBuildingDA;
@@ -27,21 +31,25 @@ import exter.eveindustry.dataprovider.refine.Refinable;
 import exter.eveindustry.dataprovider.refine.RefinableDA;
 import exter.eveindustry.dataprovider.starbase.StarbaseTower;
 import exter.eveindustry.dataprovider.starbase.StarbaseTowerDA;
+import exter.eveindustry.dataprovider.starmap.Region;
+import exter.eveindustry.dataprovider.starmap.SolarSystem;
+import exter.eveindustry.dataprovider.starmap.Starmap;
 import exter.eveindustry.dataprovider.systemcost.DummySystemCost;
 import exter.eveindustry.task.Task.Market;
 
 
 public class EVEDataProvider implements IEVEDataProvider
 {
-  private ItemDA da_inventory;
-  private BlueprintDA da_blueprint;
-  private InstallationDA da_installation;
-  private DecryptorDA da_decryptor;
-  private PlanetBuildingDA da_planetbuilding;
-  private PlanetDA da_planet;
-  private ReactionDA da_reaction;
-  private RefinableDA da_refinable;
-  private StarbaseTowerDA da_tower;
+  private final ItemDA da_inventory;
+  private final BlueprintDA da_blueprint;
+  private final InstallationDA da_installation;
+  private final DecryptorDA da_decryptor;
+  private final PlanetBuildingDA da_planetbuilding;
+  private final PlanetDA da_planet;
+  private final ReactionDA da_reaction;
+  private final RefinableDA da_refinable;
+  private final StarbaseTowerDA da_tower;
+  private final Starmap da_starmap;
   
   public EVEDataProvider(IFileSystemHandler fs)
   {
@@ -54,6 +62,7 @@ public class EVEDataProvider implements IEVEDataProvider
     da_reaction = new ReactionDA(fs,da_inventory);
     da_refinable = new RefinableDA(fs,da_inventory);
     da_tower = new StarbaseTowerDA(fs,da_inventory);
+    da_starmap = new Starmap(fs);
   }
   
   @Override
@@ -213,6 +222,16 @@ public class EVEDataProvider implements IEVEDataProvider
     return 0;
   }
   
+  public SolarSystem getSolarSystem(int ss_id)
+  {
+    return da_starmap.systems.get(ss_id);
+  }
+
+  public Region getSolarSystemRegion(int region_id)
+  {
+    return da_starmap.regions.get(region_id);
+  }
+
   public Index getBlueprintIndex()
   {
     return da_blueprint.index;
@@ -236,5 +255,40 @@ public class EVEDataProvider implements IEVEDataProvider
   public Index getPlanetProductIndex(boolean include_advanced)
   {
     return include_advanced?da_planetbuilding.index_adv:da_planetbuilding.index;
+  }
+  
+  public Iterator<Item> allItems()
+  {
+    return da_inventory.new ItemIterator();
+  }
+
+  public Iterator<ItemGroup> allItemGroups()
+  {
+    return da_inventory.new ItemGroupIterator();
+  }
+
+  public Iterator<ItemCategory> allItemCategories()
+  {
+    return da_inventory.new ItemCategoryIterator();
+  }
+
+  public Iterator<ItemMetaGroup> allItemMetaGroups()
+  {
+    return da_inventory.new ItemMetaGroupIterator();
+  }
+
+  public Iterator<InstallationGroup> allInstallationGroups()
+  {
+    return da_installation.new InstallationGroupIterator();
+  }
+
+  public Iterator<SolarSystem> allSolarSystems()
+  {
+    return da_starmap.new SolarSystemIterator();
+  }
+
+  public Iterator<Region> allSolarSystemRegions()
+  {
+    return da_starmap.new RegionIterator();
   }
 }
