@@ -1,6 +1,8 @@
 package exter.eveindustry.dataprovider;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 import exter.eveindustry.data.IEVEDataProvider;
@@ -118,6 +120,11 @@ public class EVEDataProvider implements IEVEDataProvider
   public Decryptor getDecryptor(int decryptor_id)
   {
     return da_decryptor.decryptors.get(decryptor_id);
+  }
+
+  public Collection<Decryptor> allDecryptors()
+  {
+    return Collections.unmodifiableCollection(da_decryptor.decryptors.values());
   }
 
   @Override
