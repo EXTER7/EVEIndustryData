@@ -9,6 +9,7 @@ import exter.eveindustry.data.inventory.IItem;
 import exter.eveindustry.data.systemcost.ISolarSystemIndustryCost;
 import exter.eveindustry.dataprovider.blueprint.Blueprint;
 import exter.eveindustry.dataprovider.blueprint.BlueprintDA;
+import exter.eveindustry.dataprovider.blueprint.Installation;
 import exter.eveindustry.dataprovider.blueprint.InstallationDA;
 import exter.eveindustry.dataprovider.blueprint.InstallationGroup;
 import exter.eveindustry.dataprovider.blueprint.InventionInstallation;
@@ -87,6 +88,11 @@ public class EVEDataProvider implements IEVEDataProvider
   public InstallationGroup getDefaultInstallation(IBlueprint blueprint)
   {
     return ((Blueprint)blueprint).Installation;
+  }
+
+  public Installation getInstallation(int inst_id)
+  {
+    return da_installation.installations.get(inst_id);
   }
 
   @Override
@@ -277,9 +283,19 @@ public class EVEDataProvider implements IEVEDataProvider
     return da_inventory.new ItemMetaGroupIterator();
   }
 
+  public Iterator<Installation> allInstallations()
+  {
+    return da_installation.new InstallationIterator();
+  }
+
   public Iterator<InstallationGroup> allInstallationGroups()
   {
     return da_installation.new InstallationGroupIterator();
+  }
+
+  public Iterator<InventionInstallation> allInventionInstallations()
+  {
+    return da_installation.new InventionInstallationIterator();
   }
 
   public Iterator<SolarSystem> allSolarSystems()

@@ -13,6 +13,30 @@ import exter.tsl.TSLReader;
 
 public class InstallationDA
 {
+  private class InstallationCacheMiss implements Cache.IMissListener<Integer, Installation>, IFileSystemHandler.IReadHandler<Installation>
+  {
+    @Override
+    public Installation onCacheMiss(Integer id)
+    {
+      return fs.readFile("blueprint/installation/" + String.valueOf(id) + ".tsl", this);
+    }
+
+    @Override
+    public Installation readFile(InputStream stream) throws IOException
+    {
+      try
+      {
+        TSLReader reader = new TSLReader(stream);
+        reader.moveNext();
+        TSLObject obj = new TSLObject(reader);
+        return new Installation(obj);
+      } catch(InvalidTSLException e)
+      {
+        return null;
+      }
+    }
+  }
+
   private class InstallationGroupCacheMiss implements Cache.IMissListener<Integer, InstallationGroup>, IFileSystemHandler.IReadHandler<InstallationGroup>
   {
     @Override
@@ -61,6 +85,32 @@ public class InstallationDA
     }
   }
 
+  public class InstallationIterator implements Iterator<Installation>
+  {
+    private final InstallationCacheMiss loader;
+    private final List<String> files;
+    private int index;
+
+    public InstallationIterator()
+    {
+      loader = new InstallationCacheMiss();
+      files = fs.listDirectoryFiles("blueprint/installation");
+      index = 0;
+    }
+    
+    @Override
+    public boolean hasNext()
+    {
+      return index < files.size();
+    }
+
+    @Override
+    public Installation next()
+    {
+      return fs.readFile(files.get(index++), loader);
+    }
+  }
+  
   public class InstallationGroupIterator implements Iterator<InstallationGroup>
   {
     private final InstallationGroupCacheMiss loader;
@@ -86,8 +136,34 @@ public class InstallationDA
       return fs.readFile(files.get(index++), loader);
     }
   }
-  
-  
+
+  public class InventionInstallationIterator implements Iterator<InventionInstallation>
+  {
+    private final InventionInstallationCacheMiss loader;
+    private final List<String> files;
+    private int index;
+
+    public InventionInstallationIterator()
+    {
+      loader = new InventionInstallationCacheMiss();
+      files = fs.listDirectoryFiles("blueprint/installation/invention");
+      index = 0;
+    }
+    
+    @Override
+    public boolean hasNext()
+    {
+      return index < files.size();
+    }
+
+    @Override
+    public InventionInstallation next()
+    {
+      return fs.readFile(files.get(index++), loader);
+    }
+  }
+
+  public final Cache<Integer, Installation> installations = new Cache<Integer, Installation>(new InstallationCacheMiss());
   public final Cache<Integer, InstallationGroup> installation_groups = new Cache<Integer, InstallationGroup>(new InstallationGroupCacheMiss());
   public final Cache<Integer, InventionInstallation> invention_installations = new Cache<Integer, InventionInstallation>(new InventionInstallationCacheMiss());
   IFileSystemHandler fs;
