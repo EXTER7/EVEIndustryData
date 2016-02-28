@@ -80,6 +80,21 @@ public class EVEDataProvider implements IEVEDataProvider
     return da_inventory.items.get(item_id);
   }
 
+  public ItemGroup getItemGroup(int group_id)
+  {
+    return da_inventory.groups.get(group_id);
+  }
+
+  public ItemCategory getItemCategory(int category_id)
+  {
+    return da_inventory.categories.get(category_id);
+  }
+
+  public ItemMetaGroup getItemMetaGroup(int mg_id)
+  {
+    return da_inventory.metagroups.get(mg_id);
+  }
+
   @Override
   public Blueprint getBlueprint(int blueprint_id)
   {
