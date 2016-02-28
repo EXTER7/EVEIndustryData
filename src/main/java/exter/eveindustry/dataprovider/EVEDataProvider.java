@@ -178,6 +178,11 @@ public class EVEDataProvider implements IEVEDataProvider
     return da_tower.towers.get(tower_id);
   }
 
+  public Collection<StarbaseTower> allStarbaseTowers()
+  {
+    return Collections.unmodifiableCollection(da_tower.towers.values());
+  }
+
   @Override
   public BigDecimal getItemBaseCost(IItem item)
   {
