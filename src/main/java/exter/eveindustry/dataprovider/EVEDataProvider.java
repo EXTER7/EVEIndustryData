@@ -148,6 +148,11 @@ public class EVEDataProvider implements IEVEDataProvider
     return da_planet.planets.get(planet_id);
   }
 
+  public Collection<Planet> allPlanets()
+  {
+    return Collections.unmodifiableCollection(da_planet.planets.values());
+  }
+
   @Override
   public PlanetBuilding getPlanetBuilding(int building_id)
   {
