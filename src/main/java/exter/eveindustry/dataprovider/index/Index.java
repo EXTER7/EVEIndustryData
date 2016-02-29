@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import exter.eveindustry.data.inventory.IItem;
 import exter.eveindustry.dataprovider.filesystem.IFileSystemHandler;
 import exter.tsl.InvalidTSLException;
 import exter.tsl.TSLObject;
@@ -52,6 +54,43 @@ public class Index implements IFileSystemHandler.IReadHandler<Object>
     item_ids = new ArrayList<Integer>();
     
     fs.readFile(path, this);
+  }
+  
+  public Index(String group_name,Set<Integer> itemids)
+  {
+    groups = new HashMap<Integer,Group>();
+    groups_list = new ArrayList<>();
+    entries = new ArrayList<>();
+    item_ids = new ArrayList<>();
+
+    Group g = new Group(0,group_name);
+    groups.put(0, g);
+    groups_list.add(g);
+
+    for(int id:itemids)
+    {
+      entries.add(new Entry(id, 0));
+      item_ids.add(id);
+    }
+  }
+
+
+  public Index(String group_name,List<IItem> itemlist)
+  {
+    groups = new HashMap<Integer,Group>();
+    groups_list = new ArrayList<>();
+    entries = new ArrayList<>();
+    item_ids = new ArrayList<>();
+
+    Group g = new Group(0,group_name);
+    groups.put(0, g);
+    groups_list.add(g);
+
+    for(IItem it:itemlist)
+    {
+      entries.add(new Entry(it.getID(), 0));
+      item_ids.add(it.getID());
+    }
   }
   
   public List<Entry> getEntries()
