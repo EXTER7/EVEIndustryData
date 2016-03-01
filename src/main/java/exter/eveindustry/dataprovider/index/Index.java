@@ -59,9 +59,9 @@ public class Index implements IFileSystemHandler.IReadHandler<Object>
   public Index(String group_name,Set<Integer> itemids)
   {
     groups = new HashMap<Integer,Group>();
-    groups_list = new ArrayList<>();
-    entries = new ArrayList<>();
-    item_ids = new ArrayList<>();
+    groups_list = new ArrayList<Group>();
+    entries = new ArrayList<Entry>();
+    item_ids = new ArrayList<Integer>();
 
     Group g = new Group(0,group_name);
     groups.put(0, g);
@@ -78,9 +78,9 @@ public class Index implements IFileSystemHandler.IReadHandler<Object>
   public Index(String group_name,List<IItem> itemlist)
   {
     groups = new HashMap<Integer,Group>();
-    groups_list = new ArrayList<>();
-    entries = new ArrayList<>();
-    item_ids = new ArrayList<>();
+    groups_list = new ArrayList<Group>();
+    entries = new ArrayList<Entry>();
+    item_ids = new ArrayList<Integer>();
 
     Group g = new Group(0,group_name);
     groups.put(0, g);
