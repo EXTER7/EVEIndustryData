@@ -127,7 +127,7 @@ public class EVEDataProvider implements IEVEDataProvider
   @Override
   public InventionInstallation getDefaultInventionInstallation(IBlueprint blueprint)
   {
-    int id = blueprint.getInvention().usesRelics()?38:151;
+    int id = blueprint.getInvention().usesRelics()?151:38;
     return da_installation.invention_installations.get(id);
   }
 
