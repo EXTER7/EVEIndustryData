@@ -168,8 +168,8 @@ class Installation:
       SELECT \
         assemblyLineTypeID, \
         assemblyLineTypeName, \
-        IFNULL(baseMaterialMultiplier,1), \
         baseTimeMultiplier, \
+        IFNULL(baseMaterialMultiplier,1), \
         activityID, \
         baseCostMultiplier \
       FROM \
@@ -182,6 +182,7 @@ class Installation:
     res = []
     table = dbc.fetchall()
     for row in table:
+      print(row)
       res.append(Installation(row[0],row))
     return res
 

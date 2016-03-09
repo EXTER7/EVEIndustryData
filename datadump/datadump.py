@@ -203,6 +203,7 @@ for ins in Installation.get_invention_list(dbc):
     if ins.name == "Experimental Laboratory": 
       ins.name = "Experimental Lab"
       ins.relics = True 
+    print(ins.name + " " + str(ins.time))
     inv_installation_list[ins.id] = ins
     
 for gi in gi_list:
