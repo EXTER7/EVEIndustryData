@@ -136,10 +136,12 @@ except IOError:
 print("Converting Blueprints")
 for i in blueprints:
   bp = blueprints[i]
+
+  if bp.prodid == -1:
+    continue
+
   prod = inventory.get_item(bp.prodid)
 
-  if prod.id == -1:
-    continue
 
   if prod.market_group == -1:
     continue
@@ -236,10 +238,11 @@ for key in inv_installation_list:
 
 for i in blueprints:
   bp = blueprints[i]
-  prod = inventory.get_item(bp.prodid)
 
-  if prod.id == -1:
+  if bp.prodid == -1:
     continue
+
+  prod = inventory.get_item(bp.prodid)
 
   if prod.market_group == -1:
     continue

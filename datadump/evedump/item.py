@@ -26,6 +26,8 @@ class InventoryDA:
     
 class Item:
   def __init__(self,dbc,iid):
+    if iid < 0:
+      raise Exception
     query = "\
       SELECT \
         typeName, \

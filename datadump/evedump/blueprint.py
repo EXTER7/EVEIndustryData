@@ -72,7 +72,10 @@ class Blueprint:
     result = {}
     for row in table:
       data = table[row]
-      bp = Blueprint(int(row),data,inventory)
+      bpid = int(row)
+      if inventory.get_item(bpid).id < 0:
+        continue
+      bp = Blueprint(bpid,data,inventory)
       if bp.prodid >= 0:
         result[bp.prodid] = bp
         result[bp.prodid].invention_relics = []
@@ -124,7 +127,8 @@ class Blueprint:
             if g != 716 and g != 979:
               self.materials.append(ItemStack(m["typeID"],m["quantity"]))
       self.skills = []
-      if "skills" in manufacturing and inventory.get_item(self.prodid).meta_group == 2:
+      prod = inventory.get_item(self.prodid)
+      if "skills" in manufacturing and prod.meta_group == 2:
         for s in manufacturing["skills"]:
            sid = int(s["typeID"])
            if sid in t2skills:
