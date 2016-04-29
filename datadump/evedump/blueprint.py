@@ -76,12 +76,8 @@ class Blueprint:
       if inventory.get_item(bpid).id < 0:
         continue
       bp = Blueprint(bpid,data,inventory)
-      if bp.prodid >= 0:
-        result[bp.prodid] = bp
-        result[bp.prodid].invention_relics = []
-      else:
-        result[bp.bpid] = bp
-        result[bp.bpid].invention_relics = []
+      result[bp.bpid] = bp
+      result[bp.bpid].invention_relics = []
     fd.close()
 
 
@@ -98,7 +94,11 @@ class Blueprint:
             p = int(d["activities"]["manufacturing"]["products"][0]["typeID"])
             if p in result:
               result[p].invention = inv
-              if inventory.get_item(p).meta_group == 14:
+              item = inventory.get_item(p)
+              if item.id < 0:
+                print("Bad blueprint invention result: ",p)
+                continue
+              if item.meta_group == 14:
                 result[p].invention_relics.append(InventionRelic(bp.bpid,r.chance,r.runs))
                 result[p].invention_chance = 0
                 result[p].invention_runs = 0
@@ -117,6 +117,10 @@ class Blueprint:
 
       self.prodid = int(manufacturing["products"][0]["typeID"])
       self.amount = int(manufacturing["products"][0]["quantity"])
+      prod = inventory.get_item(self.prodid)
+      if prod.id < 0:
+        print("Bad blueprint manufacturing result: ",self.prodid)
+        return
       self.time = manufacturing["time"]
       self.materials = []
       if "materials" in manufacturing:
@@ -127,13 +131,12 @@ class Blueprint:
             if g != 716 and g != 979:
               self.materials.append(ItemStack(m["typeID"],m["quantity"]))
       self.skills = []
-      prod = inventory.get_item(self.prodid)
       if "skills" in manufacturing and prod.meta_group == 2:
         for s in manufacturing["skills"]:
            sid = int(s["typeID"])
            if sid in t2skills:
              self.skills.append(sid)
-    
+
 
 
 class Installation:

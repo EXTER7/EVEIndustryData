@@ -141,6 +141,9 @@ for i in blueprints:
     continue
 
   prod = inventory.get_item(bp.prodid)
+  if prod.id == -1:
+    print("Bad blueprint product id: ",bp.prodid)
+    continue
 
 
   if prod.market_group == -1:
@@ -244,6 +247,8 @@ for i in blueprints:
     continue
 
   prod = inventory.get_item(bp.prodid)
+  if prod.id == -1:
+    continue
 
   if prod.market_group == -1:
     continue
