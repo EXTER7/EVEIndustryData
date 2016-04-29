@@ -76,8 +76,12 @@ class Blueprint:
       if inventory.get_item(bpid).id < 0:
         continue
       bp = Blueprint(bpid,data,inventory)
-      result[bp.bpid] = bp
-      result[bp.bpid].invention_relics = []
+      if bp.prodid >= 0:
+        result[bp.prodid] = bp
+        result[bp.prodid].invention_relics = []
+      else:
+        result[bp.bpid] = bp
+        result[bp.bpid].invention_relics = []
     fd.close()
 
 
