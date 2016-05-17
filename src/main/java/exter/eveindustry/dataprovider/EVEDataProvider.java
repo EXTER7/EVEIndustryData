@@ -339,4 +339,16 @@ public class EVEDataProvider implements IEVEDataProvider
   {
     return da_starmap.new RegionIterator();
   }
+
+  @Override
+  public BigDecimal getDefaultBrokerFee()
+  {
+    return new BigDecimal("3");
+  }
+
+  @Override
+  public BigDecimal getDefaultTransactionTax()
+  {
+    return new BigDecimal("2");
+  }
 }
